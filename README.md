@@ -13,4 +13,3 @@ cd path/to/directory/trolldetector
 ```
 pip install .
 ```
-
