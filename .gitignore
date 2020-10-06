@@ -12,3 +12,4 @@
 *.log
 /.idea
 /venv/
+/KNN/__pycache__
