@@ -1,5 +1,6 @@
 import argparse
 from KNN import knn
+from NB import nb
 
 if __name__ == "__main__":
 #def main():
@@ -15,31 +16,40 @@ if __name__ == "__main__":
     knn_parser = subparsers.add_parser("KNN", add_help=False, help="k-nearest neighbor classification")
     knn_parser.add_argument("-k", dest="kvar", metavar="<value>", type=int, default=5, help="changes k value")
     knn_parser.add_argument("-m", dest="metric", metavar="<metric>", type=str, default="euclidean", choices=["euclidean", "manhattan", "chebyshev"], help="determines the metric for distance measurement")
-    knn_parser.add_argument("--test",dest="tperc", metavar="<perc>", type=float,default=0.1, help="changes the proportion of test data")
-    knn_parser.add_argument("-c", dest="comp", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
-    knn_parser.add_argument("-v", "--verbose", dest="verb", action="store_true", help="produces more detailed output")
-    knn_parser.add_argument("-h", dest="help", action="store_true", help="displays this help message")
-
-    # parser for svm command
-    svm_parser = subparsers.add_parser("SVM", add_help=False, help="support-vector machine classification")
+    knn_parser.add_argument("--tf", dest="tfKNN", action="store_true", help="changes the feature weighting to TF")
+    knn_parser.add_argument("--test",dest="tpercKNN", metavar="<perc>", type=float,default=0.1, help="changes the proportion of test data")
+    knn_parser.add_argument("-c", dest="compKNN", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
+    knn_parser.add_argument("-v", "--verbose", dest="verbKNN", action="store_true", help="produces more detailed output")
+    knn_parser.add_argument("-h", dest="helpKNN", action="store_true", help="displays this help message")
 
     # parser for nb command
     nb_parser = subparsers.add_parser("NB", add_help=False, help="Naive Bayes classification")
+    nb_parser.add_argument("--test",dest="tpercNB", metavar="<perc>", type=float,default=0.1, help="changes the proportion of test data")
+    nb_parser.add_argument("-c", dest="compNB", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
+    nb_parser.add_argument("--tfidf", dest="tfidfNB", action="store_true", help="changes the feature weighting to TF-IDF")
+    nb_parser.add_argument("-v", "--verbose", dest="verbNB", action="store_true", help="produces more detailed output")
+    nb_parser.add_argument("-h", dest="helpNB", action="store_true", help="displays this help message")
+
+    # parser for svm command
+    svm_parser = subparsers.add_parser("SVM", add_help=False, help="support-vector machine classification")
 
     # get arguments
     args = pparser.parse_args()
     method = args.command
 
     if method == "KNN":
-        if(args.help == True):
+        if args.helpKNN == True:
             knn_parser.print_help()
         else:
-            knn.classify(args.kvar, args.metric, args.tperc, args.comp, args.verb)
+            knn.classify(args.kvar, args.metric, args.tfKNN, args.tpercKNN, args.compKNN, args.verb)
 
     elif method == "SVM":
         print("construction site -- come again later")
 
     elif method == "NB":
-        print("construction site -- come again later")
+        if args.helpNB == True:
+            nb_parser.print_help()
+        else:
+            nb.classify(args.tpercNB, args.compNB, args.tfidfNB, args.verbNB)
 
 
