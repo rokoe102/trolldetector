@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn import metrics
+from sklearn.decomposition import NMF
 
 import pandas as pd
 import numpy as np
@@ -17,10 +18,9 @@ def classify(test, comp,tfidf,dist, verbose):
             print("selected feature weighting: TF-IDF")
         else:
             print("selected feature weighting: TF")
+        print("presumed distribution: " + dist)
         print("training/testing ratio: " + str(1 - test) + "/" + str(test))
         print("------------------------------------------------------")
-
-    if verbose:
         print("loading datasets")
 
     troll = pd.read_csv("datasets/troll_top10.csv", encoding="utf-8", low_memory=False)
@@ -50,8 +50,12 @@ def classify(test, comp,tfidf,dist, verbose):
     # dimensionality reduction
     if verbose:
         print("reducing dimensions")
-    svd = TruncatedSVD(n_components=comp, random_state=42)
-    X_reduced = svd.fit_transform(X_train_counts)
+
+    #svd = TruncatedSVD(n_components=comp, random_state=42)
+    #X_reduced = svd.fit_transform(X_train_counts)
+
+    nmf = NMF(n_components=comp)
+    X_reduced = nmf.fit_transform(X_train_counts)
 
 
     # splitting into training data and testing data
