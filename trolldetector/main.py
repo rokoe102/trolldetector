@@ -27,6 +27,7 @@ if __name__ == "__main__":
     nb_parser.add_argument("--test",dest="tpercNB", metavar="<perc>", type=float,default=0.1, help="changes the proportion of test data")
     nb_parser.add_argument("-c", dest="compNB", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
     nb_parser.add_argument("--tfidf", dest="tfidfNB", action="store_true", help="changes the feature weighting to TF-IDF")
+    nb_parser.add_argument("-d", "--distribution", dest="distNB", type=str, default="gaussian", help="changes the presumed distribution of the data")
     nb_parser.add_argument("-v", "--verbose", dest="verbNB", action="store_true", help="produces more detailed output")
     nb_parser.add_argument("-h", dest="helpNB", action="store_true", help="displays this help message")
 
@@ -41,7 +42,7 @@ if __name__ == "__main__":
         if args.helpKNN == True:
             knn_parser.print_help()
         else:
-            knn.classify(args.kvar, args.metric, args.tfKNN, args.tpercKNN, args.compKNN, args.verb)
+            knn.classify(args.kvar, args.metric, args.tfKNN, args.distNB, args.tpercKNN, args.compKNN, args.verb)
 
     elif method == "SVM":
         print("construction site -- come again later")
@@ -50,6 +51,6 @@ if __name__ == "__main__":
         if args.helpNB == True:
             nb_parser.print_help()
         else:
-            nb.classify(args.tpercNB, args.compNB, args.tfidfNB, args.verbNB)
+            nb.classify(args.tpercNB, args.compNB, args.tfidfNB,args.distNB, args.verbNB)
 
 

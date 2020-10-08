@@ -21,6 +21,8 @@ Der Klassifikator bestimmt nun diejenige Klasse $k_i$, für die der Wert dieser 
 \begin{equation}
 	k = arg \max\limits_{k_i \in K} P(k_i|t) = arg \max\limits_{k_i \in K} \frac{P(t|k_i) \cdot P(k_i)}{P(t)}
 \end{equation}
+Die Werte für $P(k_i)$ und $P(t)$ werden a priori über relative Anteilshäufigkeiten, also über den Anteil einer Klasse und den Anteil eines Textes am gesamten Merkmalraum, bestimmt. Für die Maximierung wird meist die Maximum-Likelihood-Methode benutzt.\\
+Jeder Klasse wird vor der Klassifizierung eine bestimmte Form der Wahrscheinlichkeitsverteilung, meist eine Normalverteilung, und die stochastische Unabhängigkeit der Merkmale unterstellt. Letztere Annahme ist \glqq naiv\grqq{}  weil nicht immer zutreffend, der Algorithmus liefert in der Praxis bei vielen Anwendungen dennoch solide Ergebnisse. Wird diese Annahme hingegen durch stark korrelierte Daten gröber verletzt, so sind Genauigkeitsverluste zu erwarten, was eine Schwäche dieses Verfahrens ist. Im Rahmen der Evaluation werden Ergebnisse unter Annahme einer Normalverteilung und einer Multinomialverteilung verglichen.
 \pagebreak
 \subsection{Support Vector Machine}
 Lorem ipsum dolor sit amet.\pagebreak

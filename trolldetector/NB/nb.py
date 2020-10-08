@@ -1,13 +1,13 @@
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn import metrics
 
 import pandas as pd
 import numpy as np
 
-def classify(test, comp,tfidf, verbose):
+def classify(test, comp,tfidf,dist, verbose):
 
     if verbose:
         print("------------------------------------------------------")
@@ -60,21 +60,44 @@ def classify(test, comp,tfidf, verbose):
     X_train, X_test, y_train, y_test = train_test_split(X_reduced, target, test_size=test, random_state=42,
                                                         shuffle=True)
 
-    nb = GaussianNB()
+    if dist == "gaussian":
+        gnb = GaussianNB()
 
-    # training
-    if verbose:
-        print("training the model")
-    nb.fit(X_train, y_train)
+        # training
+        if verbose:
+            print("training the model")
+        gnb.fit(X_train, y_train)
 
-    # testing
-    if verbose:
-        print("making predictions")
-    predicted = nb.predict(X_test)
+        # testing
+        if verbose:
+            print("making predictions")
+        predicted = gnb.predict(X_test)
 
-    # report the results
-    print("------------------------------------------------------")
-    print("                       REPORT                         ")
-    print("------------------------------------------------------")
+        # report the results
+        print("------------------------------------------------------")
+        print("                       REPORT                         ")
+        print("------------------------------------------------------")
 
-    print(metrics.classification_report(y_test, predicted))
+        print(metrics.classification_report(y_test, predicted))
+
+    elif dist == "multinomial":
+        mnb = MultinomialNB()
+        # training
+        if verbose:
+            print("training the model")
+        mnb.fit(X_train, y_train)
+
+        # testing
+        if verbose:
+            print("making predictions")
+        predicted = mnb.predict(X_test)
+
+        # report the results
+        print("------------------------------------------------------")
+        print("                       REPORT                         ")
+        print("------------------------------------------------------")
+
+        print(metrics.classification_report(y_test, predicted))
+
+
+
