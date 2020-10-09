@@ -10,12 +10,12 @@ def classify(test, comp,tfidf,metr,verbose):
     if verbose:
         print("--------------------------------------------------------")
         print("classification technique: decision tree classification")
-        print("selected components for reduction: " + str(comp))
+        print("selected metric for finding the best split: " + metr)
         if tfidf:
             print("selected feature weighting: TF-IDF")
         else:
             print("selected feature weighting: TF")
-        print("selected metric for finding the best split: " + metr)
+        print("selected components for reduction: " + str(comp))
         print("training/testing ratio: " + str(1 - test) + "/" + str(test))
         print("--------------------------------------------------------")
         print("loading datasets")

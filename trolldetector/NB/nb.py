@@ -13,12 +13,12 @@ def classify(test, comp,tfidf,dist, verbose):
     if verbose:
         print("------------------------------------------------------")
         print("classification technique: Naive Bayes classifyer")
-        print("selected components for reduction: " + str(comp))
+        print("presumed distribution: " + dist)
         if tfidf:
             print("selected feature weighting: TF-IDF")
         else:
             print("selected feature weighting: TF")
-        print("presumed distribution: " + dist)
+        print("selected components for reduction: " + str(comp))
         print("training/testing ratio: " + str(1 - test) + "/" + str(test))
         print("------------------------------------------------------")
         print("loading datasets")

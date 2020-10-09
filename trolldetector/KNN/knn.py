@@ -20,8 +20,6 @@ def classify(k, metr, tf, test, components, verbose):
         print("selected components for reduction: " + str(components))
         print("training/testing ratio: " + str(1 - test) + "/" + str(test))
         print("------------------------------------------------------")
-
-    if verbose:
         print("loading datasets")
 
     troll = pd.read_csv("datasets/troll_top10.csv", encoding="utf-8", low_memory=False)

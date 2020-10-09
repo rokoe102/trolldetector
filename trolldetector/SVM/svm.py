@@ -10,12 +10,12 @@ def classify(test, comp,tfidf,cost,verbose):
     if verbose:
         print("--------------------------------------------------------")
         print("classification technique: support-vector machine")
-        print("selected components for reduction: " + str(comp))
+        print("selected cost for misclassification penalization: " + str(cost))
         if tfidf:
             print("selected feature weighting: TF-IDF")
         else:
             print("selected feature weighting: TF")
-        print("selected cost for misclassification penalization: " + str(cost))
+        print("selected components for reduction: " + str(comp))
         print("training/testing ratio: " + str(1 - test) + "/" + str(test))
         print("--------------------------------------------------------")
         print("loading datasets")
