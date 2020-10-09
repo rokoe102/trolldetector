@@ -2,6 +2,7 @@ import argparse
 from KNN import knn
 from NB import nb
 from SVM import svm
+from dtree import dtree
 import time
 
 if __name__ == "__main__":
@@ -44,6 +45,15 @@ if __name__ == "__main__":
     svm_parser.add_argument("-v", "--verbose", dest="verbSVM", action="store_true", help="produces more detailed output")
     svm_parser.add_argument("-h", dest="helpSVM", action="store_true", help="displays this help message")
 
+    tree_parser = subparsers.add_parser("tree", add_help=False, help="decision tree classification")
+    tree_parser.add_argument("--test",dest="tpercTree", metavar="<perc>", type=float,default=0.1, help="changes the proportion of test data")
+    tree_parser.add_argument("-c", dest="compTree", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
+    tree_parser.add_argument("--tfidf", dest="tfidfTree", action="store_true", help="changes the feature weighting to TF-IDF")
+    tree_parser.add_argument("-m", dest="metrTree", type=str,default="gini",choices=["gini", "entropy"], help="determines the metric used for finding the best split")
+    tree_parser.add_argument("-v", "--verbose", dest="verbTree", action="store_true", help="produces more detailed output")
+    tree_parser.add_argument("-h", dest="helpTree", action="store_true", help="displays this help message")
+
+
     # get arguments
     args = pparser.parse_args()
     method = args.command
@@ -66,6 +76,12 @@ if __name__ == "__main__":
             svm_parser.print_help()
         else:
             svm.classify(args.tpercSVM, args.compSVM, args.tfidfSVM, args.cost, args.verbSVM)
+
+    elif method == "tree":
+        if args.helpTree == True:
+            tree_parser.print_help()
+        else:
+            dtree.classify(args.tpercTree, args.compTree, args.tfidfTree, args.metrTree, args.verbTree)
 
     runtime = time.process_time() - start
     minutes, seconds = divmod(runtime, 60)
