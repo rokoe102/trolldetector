@@ -3,6 +3,7 @@ from KNN import knn
 from NB import nb
 from SVM import svm
 from dtree import dtree
+from MLP import mlp
 import time
 
 if __name__ == "__main__":
@@ -53,6 +54,15 @@ if __name__ == "__main__":
     tree_parser.add_argument("-v", "--verbose", dest="verbTree", action="store_true", help="produces more detailed output")
     tree_parser.add_argument("-h", dest="helpTree", action="store_true", help="displays this help message")
 
+    # parser for MLP command
+    mlp_parser = subparsers.add_parser("MLP", add_help=False, help="multi-layer perceptron classification")
+    mlp_parser = subparsers.add_parser("-a", dest="actMLP", type=str, default="relu", choices=["relu","tanh","identity","logistic"], help="changes the activation function")
+    mlp_parser.add_argument("--tfidf", dest="tfidfMLP", action="store_true", help="changes the feature weighting to TF-IDF")
+    mlp_parser.add_argument("-c", dest="compMLP", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
+    mlp_parser.add_argument("--test", dest="tpercMLP", metavar="<perc>", type=float, default=0.1, help="changes the proportion of test data")
+    mlp_parser.add_argument("-v", "--verbose", dest="verbMLP", action="store_true", help="produces more detailed output")
+    mlp_parser.add_argument("-h", dest="helpMLP", action="store_true", help="displays this help message")
+
     # get arguments
     args = pparser.parse_args()
     method = args.command
@@ -81,6 +91,12 @@ if __name__ == "__main__":
             tree_parser.print_help()
         else:
             dtree.classify(args.tpercTree, args.compTree, args.tfidfTree, args.metrTree, args.verbTree)
+
+    elif method == "MLP":
+        if args.helpMLP:
+            mlp_parser.print_help()
+        else:
+            mlp.classify(args.actMLP,args.tpercMLP, args.compMLP, args.tfidfMLP, args.verbMLP)
 
     # measure and print runtime
     runtime = time.process_time() - start

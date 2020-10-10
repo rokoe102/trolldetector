@@ -1,23 +1,22 @@
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn import metrics
 import pandas as pd
 import numpy as np
 
-def classify(test, comp,tfidf,metr,verbose):
+def classify(actFunc,test, comp,tfidf,verbose):
 
-    print("--------------------------------------------------------")
-    print("classification technique: decision tree classification")
-    print("selected metric for finding the best split: " + metr)
+    print("---------------------------------------------------------------")
+    print("classification technique: multi-layer perceptron classification")
     if tfidf:
         print("selected feature weighting: TF-IDF")
     else:
         print("selected feature weighting: TF")
     print("selected components for reduction: " + str(comp))
     print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("--------------------------------------------------------")
+    print("---------------------------------------------------------------")
     if verbose:
         print("loading datasets")
 
@@ -57,17 +56,17 @@ def classify(test, comp,tfidf,metr,verbose):
         print("splitting data")
     X_train, X_test, y_train, y_test = train_test_split(X_reduced, target, test_size=test, random_state=42, shuffle=True)
 
-    treeClf = DecisionTreeClassifier(criterion=metr, verbose=verbose)
+    mlp = MLPClassifier(random_state=1,activation=actFunc,max_iter=100,learning_rate="constant",verbose=verbose)
 
     # training
     if verbose:
         print("training the model")
-    treeClf.fit(X_train, y_train)
+    mlp.fit(X_train, y_train)
 
     # testing
     if verbose:
         print("making predictions")
-    predicted = treeClf.predict(X_test)
+    predicted = mlp.predict(X_test)
 
     # report the results
     print("------------------------------------------------------")
