@@ -6,7 +6,7 @@ from sklearn import metrics
 import pandas as pd
 import numpy as np
 
-def classify(test, comp,tfidf,metr,verbose):
+def trainAndTest(test, comp,tfidf,gram,metr,verbose):
 
     print("--------------------------------------------------------")
     print("classification technique: decision tree classification")
@@ -15,6 +15,7 @@ def classify(test, comp,tfidf,metr,verbose):
         print("selected feature weighting: TF-IDF")
     else:
         print("selected feature weighting: TF")
+    print("selected n for n-grams: " + str(gram))
     print("selected components for reduction: " + str(comp))
     print("training/testing ratio: " + str(1 - test) + "/" + str(test))
     print("--------------------------------------------------------")
@@ -34,7 +35,7 @@ def classify(test, comp,tfidf,metr,verbose):
     t = np.full(324873, "nontroll").tolist()
     target.extend(t)
 
-    count_vec = CountVectorizer()
+    count_vec = CountVectorizer(ngram_range=(1,gram))
     tfidf_transformer = TfidfTransformer()
 
     # vectorizing and weighting

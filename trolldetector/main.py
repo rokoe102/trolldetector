@@ -14,6 +14,7 @@ if __name__ == "__main__":
     # define main parser
     pparser = argparse.ArgumentParser(prog="trolldetector")
     pparser._optionals.title = "Options"
+    pparser.add_argument("--optimize",dest="optimize", action="store_true", help="hyperparameter optimization")
 
     subparsers = pparser.add_subparsers(title="classification techniques", dest="command")
 
@@ -22,6 +23,7 @@ if __name__ == "__main__":
     knn_parser.add_argument("-k", dest="kvar", metavar="<value>", type=int, default=5, help="changes k value")
     knn_parser.add_argument("-m", dest="metric", metavar="<metric>", type=str, default="euclidean", choices=["euclidean", "manhattan", "chebyshev"], help="determines the metric for distance measurement")
     knn_parser.add_argument("--tf", dest="tfKNN", action="store_true", help="changes the feature weighting to TF")
+    knn_parser.add_argument("-g", "--gram",dest="gramKNN", type=int,default=1,help="changes the max n for n-grams")
     knn_parser.add_argument("-c", dest="compKNN", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
     knn_parser.add_argument("--test",dest="tpercKNN", metavar="<perc>", type=float,default=0.1, help="changes the proportion of test data")
     knn_parser.add_argument("-v", "--verbose", dest="verbKNN", action="store_true", help="produces more detailed output")
@@ -31,6 +33,7 @@ if __name__ == "__main__":
     nb_parser = subparsers.add_parser("NB", add_help=False, help="Naive Bayes classification")
     nb_parser.add_argument("-d", "--distribution", dest="distNB", type=str, default="gaussian",choices = ["gaussian", "multinomial"], help="changes the presumed distribution of the data")
     nb_parser.add_argument("--tfidf", dest="tfidfNB", action="store_true", help="changes the feature weighting to TF-IDF")
+    nb_parser.add_argument("-g", "--gram", dest="gramNB", type=int,default=1, help="changes the max n for n-grams")
     nb_parser.add_argument("-c", dest="compNB", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
     nb_parser.add_argument("--test", dest="tpercNB", metavar="<perc>", type=float, default=0.1, help="changes the proportion of test data")
     nb_parser.add_argument("-v", "--verbose", dest="verbNB", action="store_true", help="produces more detailed output")
@@ -40,6 +43,7 @@ if __name__ == "__main__":
     svm_parser = subparsers.add_parser("SVM", add_help=False, help="support-vector machine classification")
     svm_parser.add_argument("--cost", dest="cost", type=float, default=1.0, help="changes the penalization parameter for misclassification")
     svm_parser.add_argument("--tfidf", dest="tfidfSVM", action="store_true", help="changes the feature weighting to TF-IDF")
+    svm_parser.add_argument("-g", "--gram", dest="gramSVM", type=int, default=1, help="changes the max n for n-grams")
     svm_parser.add_argument("-c", dest="compSVM", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
     svm_parser.add_argument("--test", dest="tpercSVM", metavar="<perc>", type=float, default=0.1, help="changes the proportion of test data")
     svm_parser.add_argument("-v", "--verbose", dest="verbSVM", action="store_true", help="produces more detailed output")
@@ -49,6 +53,7 @@ if __name__ == "__main__":
     tree_parser = subparsers.add_parser("tree", add_help=False, help="decision tree classification")
     tree_parser.add_argument("-m", dest="metrTree", type=str, default="gini", choices=["gini", "entropy"], help="determines the metric used for finding the best split")
     tree_parser.add_argument("--tfidf", dest="tfidfTree", action="store_true", help="changes the feature weighting to TF-IDF")
+    tree_parser.add_argument("-g", "--gram", dest="gramTree", type=int, default=1, help="changes the max n for n-grams")
     tree_parser.add_argument("-c", dest="compTree", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
     tree_parser.add_argument("--test", dest="tpercTree", metavar="<perc>", type=float, default=0.1, help="changes the proportion of test data")
     tree_parser.add_argument("-v", "--verbose", dest="verbTree", action="store_true", help="produces more detailed output")
@@ -56,8 +61,9 @@ if __name__ == "__main__":
 
     # parser for MLP command
     mlp_parser = subparsers.add_parser("MLP", add_help=False, help="multi-layer perceptron classification")
-    mlp_parser = subparsers.add_parser("-a", dest="actMLP", type=str, default="relu", choices=["relu","tanh","identity","logistic"], help="changes the activation function")
+    mlp_parser.add_argument("-a", dest="actMLP", type=str, default="relu", choices=["relu","tanh","identity","logistic"], help="changes the activation function")
     mlp_parser.add_argument("--tfidf", dest="tfidfMLP", action="store_true", help="changes the feature weighting to TF-IDF")
+    mlp_parser.add_argument("-g", "--gram", dest="gramMLP", type=int, default=1, help="changes the max n for n-grams")
     mlp_parser.add_argument("-c", dest="compMLP", metavar="<components>", type=int, default=5, help="changes the desired level of dimensionality reduction")
     mlp_parser.add_argument("--test", dest="tpercMLP", metavar="<perc>", type=float, default=0.1, help="changes the proportion of test data")
     mlp_parser.add_argument("-v", "--verbose", dest="verbMLP", action="store_true", help="produces more detailed output")
@@ -70,33 +76,35 @@ if __name__ == "__main__":
     if method == "KNN":
         if args.helpKNN == True:
             knn_parser.print_help()
+        if args.optimize == True:
+            knn.optimize(args.tfKNN, args.tpercKNN, args.compKNN, args.verbKNN)
         else:
-            knn.classify(args.kvar, args.metric, args.tfKNN, args.distNB, args.tpercKNN, args.compKNN, args.verb)
+            knn.trainAndTest(args.kvar, args.metric, args.tfKNN,args.gramKNN, args.tpercKNN, args.compKNN, args.verbKNN)
 
 
     elif method == "NB":
         if args.helpNB == True:
             nb_parser.print_help()
         else:
-            nb.classify(args.tpercNB, args.compNB, args.tfidfNB,args.distNB, args.verbNB)
+            nb.trainAndTest(args.tpercNB, args.compNB, args.tfidfNB,args.gramNB,args.distNB, args.verbNB)
 
     elif method == "SVM":
         if args.helpSVM == True:
             svm_parser.print_help()
         else:
-            svm.classify(args.tpercSVM, args.compSVM, args.tfidfSVM, args.cost, args.verbSVM)
+            svm.trainAndTest(args.tpercSVM, args.compSVM, args.tfidfSVM,args.gramSVM, args.cost, args.verbSVM)
 
     elif method == "tree":
         if args.helpTree == True:
             tree_parser.print_help()
         else:
-            dtree.classify(args.tpercTree, args.compTree, args.tfidfTree, args.metrTree, args.verbTree)
+            dtree.trainAndTest(args.tpercTree, args.compTree, args.tfidfTree,args.gramTree, args.metrTree, args.verbTree)
 
     elif method == "MLP":
         if args.helpMLP:
             mlp_parser.print_help()
         else:
-            mlp.classify(args.actMLP,args.tpercMLP, args.compMLP, args.tfidfMLP, args.verbMLP)
+            mlp.trainAndTest(args.actMLP,args.tpercMLP, args.compMLP, args.tfidfMLP,args.gramMLP, args.verbMLP)
 
     # measure and print runtime
     runtime = time.process_time() - start
