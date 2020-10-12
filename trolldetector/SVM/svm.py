@@ -3,70 +3,56 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC, LinearSVC
 from sklearn import metrics
-import pandas as pd
-import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV
+from parsing import prepare
 
-def trainAndTest(test, comp,tfidf,gram,cost,verbose):
-    if verbose:
-        print("--------------------------------------------------------")
-        print("classification technique: support-vector machine")
-        print("selected cost for misclassification penalization: " + str(cost))
-        if tfidf:
-            print("selected feature weighting: TF-IDF")
-        else:
-            print("selected feature weighting: TF")
-        print("selected n for n-grams: " + str(gram))
-        print("selected components for reduction: " + str(comp))
-        print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-        print("--------------------------------------------------------")
+def trainAndTest(test,cost,cargs):
+
+    print("--------------------------------------------------------")
+    print("classification technique: support-vector machine")
+    print("selected cost for misclassification penalization: " + str(cost))
+    cargs.print()
+    print("training/testing ratio: " + str(1 - test) + "/" + str(test))
+    print("--------------------------------------------------------")
+    if cargs.verbose:
         print("loading datasets")
 
-    troll = pd.read_csv("datasets/troll_top10.csv", encoding="utf-8", low_memory=False)
-    nontroll = pd.read_csv("datasets/nontroll_top10.csv", encoding="utf-8", low_memory=False)
+    tweets = prepare.prepare_datasets()
 
-    # merge both
-    tweets = troll['content'].tolist()
-    nontroll = nontroll['Text'].tolist()
-    tweets.extend(nontroll)
-
-    # create labels
-    target = np.full(303036, "troll").tolist()
-    t = np.full(324873, "nontroll").tolist()
-    target.extend(t)
-
-    count_vec = CountVectorizer(ngram_range=(1,gram))
+    count_vec = CountVectorizer(ngram_range=(1,cargs.ngram))
     tfidf_transformer = TfidfTransformer()
 
     # vectorizing and weighting
-    if verbose:
+    if cargs.verbose:
         print("preprocessing")
 
     X_train_counts = count_vec.fit_transform(tweets)
-    if tfidf:
+    if cargs.tfidf:
         X_train_counts = tfidf_transformer.fit_transform(X_train_counts)
 
     # dimensionality reduction
-    if verbose:
+    if cargs.verbose:
         print("reducing dimensions")
 
-    svd = TruncatedSVD(n_components=comp, random_state=42)
+    svd = TruncatedSVD(n_components=cargs.dims, random_state=42)
     X_reduced = svd.fit_transform(X_train_counts)
 
     # splitting into training data and testing data
-    if verbose:
+    if cargs.verbose:
         print("splitting data")
-    X_train, X_test, y_train, y_test = train_test_split(X_reduced, target, test_size=test, random_state=42, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(X_reduced, prepare.getTarget(), test_size=test, random_state=42, shuffle=True)
 
-    #svm = SVC(C=cost, kernel="linear")
+
     svm = LinearSVC(C=cost)
 
     # training
-    if verbose:
+    if cargs.verbose:
         print("training the model")
     svm.fit(X_train, y_train)
 
     # testing
-    if verbose:
+    if cargs.verbose:
         print("making predictions")
     predicted = svm.predict(X_test)
 
@@ -76,3 +62,38 @@ def trainAndTest(test, comp,tfidf,gram,cost,verbose):
     print("------------------------------------------------------")
 
     print(metrics.classification_report(y_test, predicted))
+
+def optimize(test, verbose):
+    print("-------------------------------------------------------------")
+    print("hyperparameter optimization for: support vector machine")
+    print("-------------------------------------------------------------")
+    if verbose:
+        print("loading datasets")
+
+    tweets = prepare.prepare_datasets()
+
+    # splitting into training data and testing data
+    if verbose:
+        print("splitting data")
+    X_train, X_test, y_train, y_test = train_test_split(tweets, prepare.getTarget(), test_size=test, random_state=0)
+
+    pipe = Pipeline(steps=[
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("reductor", TruncatedSVD()),
+        ("clf", LinearSVC())
+    ])
+
+    parameter_space = {"vect__ngram_range": [(1, 1), (1, 2)],
+         "tfidf__use_idf": (True, False),
+         "reductor": [TruncatedSVD()],
+         "reductor__n_components": [10],
+         "clf__C": [1, 0.75, 0.5]
+         }
+
+    grSearch = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, verbose=2)
+    grSearch.fit(X_train, y_train)
+
+    print("Best score: %0.3f" % grSearch.best_score_)
+    print("Best parameters set:")
+    print(grSearch.best_params_)
