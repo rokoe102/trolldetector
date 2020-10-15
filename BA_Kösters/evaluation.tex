@@ -1,6 +1,13 @@
 \section{Evaluation}\raggedbottom
-Lorem ipsum dolor sit amet.
+Im nachfolgenden Kapitel werden die Ergebnisse der praktischen Anwendung der Techniken aus Kapitel \ref{clf} auf die vorliegenden Datensätze in ausführlicher Weise ausgewertet. Hierfür wurde für jedes Verfahren eine Hyperparameteroptimierung durchgeführt, um herauszufinden, wie sich unterschiedliche Kombinationen aus  Merkmalsextraktion und den einstellbaren Hyperparametern qualitativ unterscheiden. Weiterhin sollen bestehende \textit{Trade-offs} (z.B. Qualität vs. Performance) erörtert werden.
+\subsection{Implementierung} 
+Zwecks Nachvollziehbarkeit und Transparenz soll an dieser Stelle kurz auf die parallel erfolgte praktische Anwendung der beschriebenen Techniken eingegangen werden.\\
+Im Rahmen dieser Abschlussarbeit wurde ein Kommandozeilen-Tool namens \glqq TrollDetector\grqq{} in der Programmiersprache Python entwickelt. Dieses hat mehrere Funktionen. Zum einen ist damit möglich, ein beliebiges Klassifikationsverfahren mit selbst gewählten Hyperparametern auf den Datensatz anzuwenden. Die Menge der Tweets wird nach einem selbst bestimmten Verhältnis in eine Trainingsmenge und eine Testmenge aufgeteilt. Die Trainingsmenge dient dem jeweiligen Verfahren als Lerneingabe, während die Testmenge zur Klassifikation und zur anschließenden Beurteilung herangezogen werden. Hier sind auch Merkmalsextraktion (z.B. TF vs. TF-IDF) und Dimensionalitätsreduktion direkt steuerbar.\\
+Eine weitere Funktion ist die Hyperparameteroptimierung für jedes Verfahren mit anschließender Auswertung der Ergebnisse. Für die Optimierung wird eine Rastersuche verwendet. Bei dieser Methode wird das jeweilige Klassifikationsverfahren auf einer fest definierten Untermenge aller möglichen Kombinationen von Hyperparametern ausgeführt. Anschließend werden die Ergebnisse der Kombinationen ausgewertet.\\
+Zur Verarbeitung und Klassifikation des Datensatzes wurden ausschließlich Klassen und Funktionen aus der \glqq scikit-learn\grqq-Bibliothek von \citet{scikit-learn} verwendet.
 \subsection{Gütekriterien}
-Lorem ipsum dolor sit amet.\pagebreak\pagebreak
+Bevor eine Bewertung vorgenommen werden kann, [...]
+
+\pagebreak\pagebreak
 \subsection{Ergebnisse}
 Lorem ipsum dolor sit amet.
