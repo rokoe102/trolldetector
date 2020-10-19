@@ -7,6 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
 from parsing import prepare
+from report.hypoptreport import HypOptReport
 
 
 def trainAndTest(test,dist,cargs):
@@ -107,16 +108,16 @@ def trainAndTest(test,dist,cargs):
 
 
     # report the results
-    print("------------------------------------------------------")
-    print("                       REPORT                         ")
-    print("------------------------------------------------------")
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("|                      REPORT                        |")
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     print(metrics.classification_report(y_test, predicted,zero_division=1))
 
 def optimize(test, verbose):
-    print("-------------------------------------------------------------")
-    print("hyperparameter optimization for: Naive Bayes classification")
-    print("-------------------------------------------------------------")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("| hyperparameter optimization for: Naive Bayes classification |")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     if verbose:
         print("loading datasets")
 
@@ -139,7 +140,6 @@ def optimize(test, verbose):
                       {"vect__ngram_range": [(1, 1), (1, 2)],
                        "vect__stop_words": [None, "english"],
                        "tfidf__use_idf": (True, False),
-                       "reductor__n_components": [10],
                        "scaling": [None],
                        "clf": [GaussianNB()]
                       },
@@ -147,14 +147,13 @@ def optimize(test, verbose):
                        "vect__ngram_range": [(1,1),(1,2)],
                        "vect__stop_words": [None, "english"],
                        "tfidf__use_idf": (True, False),
-                       "reductor__n_components": [10],
+                       "scaling": [MinMaxScaler()],
                        "clf": [MultinomialNB(),ComplementNB()]
                       }
     ]
 
-    grSearch = GridSearchCV(pipe, parameter_space, n_jobs=5,cv=2, verbose=2)
-    grSearch.fit(X_train, y_train)
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5,cv=2, verbose=2)
+    clf.fit(X_train, y_train)
 
-    print("Best score: %0.3f" % grSearch.best_score_)
-    print("Best parameters set:")
-    print(grSearch.best_params_)
+    report = HypOptReport("NB", clf.cv_results_)
+    report.print()

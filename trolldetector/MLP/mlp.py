@@ -6,6 +6,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn import metrics
 from parsing import prepare
+from report.hypoptreport import HypOptReport
 
 def trainAndTest(actFunc,test, cargs):
 
@@ -55,16 +56,16 @@ def trainAndTest(actFunc,test, cargs):
     predicted = mlp.predict(X_test)
 
     # report the results
-    print("------------------------------------------------------")
-    print("                       REPORT                         ")
-    print("------------------------------------------------------")
+    print("+----------------------------------------------------+")
+    print("|                      REPORT                        |")
+    print("+----------------------------------------------------+")
 
     print(metrics.classification_report(y_test, predicted))
 
 def optimize(test, verbose):
-    print("----------------------------------------------------------------------")
-    print("hyperparameter optimization for: multi-layer perceptron classification")
-    print("----------------------------------------------------------------------")
+    print("+------------------------------------------------------------------------+")
+    print("| hyperparameter optimization for: multi-layer perceptron classification |")
+    print("+------------------------------------------------------------------------+")
     if verbose:
         print("loading datasets")
 
@@ -79,22 +80,18 @@ def optimize(test, verbose):
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
         ("reductor", TruncatedSVD()),
-        ("clf", MLPClassifier(max_iter=50))
+        ("clf", MLPClassifier(max_iter=50, tol=0.005, early_stopping=True))
     ])
 
     parameter_space = {"vect__ngram_range": [(1, 1), (1, 2)],
                        "vect__stop_words": [None, "english"],
                        "tfidf__use_idf": (True, False),
-                       "reductor__n_components": [10],
                        "clf__activation": ["relu","tanh","logistic"],
-                       "clf__early_stopping": [True],
-                       "clf__tol": [0.005],
                        "clf__n_iter_no_change": [5]
                        }
 
-    grSearch = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, verbose=2)
-    grSearch.fit(X_train, y_train)
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, verbose=2)
+    clf.fit(X_train, y_train)
 
-    print("Best score: %0.3f" % grSearch.best_score_)
-    print("Best parameters set:")
-    print(grSearch.best_params_)
+    report = HypOptReport("MLP", clf.cv_results_)
+    report.print()

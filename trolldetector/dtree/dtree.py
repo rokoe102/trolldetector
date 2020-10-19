@@ -6,6 +6,8 @@ from sklearn import metrics
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 from parsing import prepare
+from report.hypoptreport import HypOptReport
+
 def trainAndTest(test,metr,cargs):
 
     print("--------------------------------------------------------")
@@ -56,16 +58,16 @@ def trainAndTest(test,metr,cargs):
     predicted = treeClf.predict(X_test)
 
     # report the results
-    print("------------------------------------------------------")
-    print("                       REPORT                         ")
-    print("------------------------------------------------------")
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("|                      REPORT                        |")
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     print(metrics.classification_report(y_test, predicted))
 
 def optimize(test, verbose):
-    print("-------------------------------------------------------------")
-    print("hyperparameter optimization for: decision tree classification")
-    print("-------------------------------------------------------------")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("| hyperparameter optimization for: decision tree classification |")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     if verbose:
         print("loading datasets")
 
@@ -86,14 +88,12 @@ def optimize(test, verbose):
     parameter_space = {"vect__ngram_range": [(1, 1), (1, 2)],
          "vect__stop_words": [None, "english"],
          "tfidf__use_idf": (True, False),
-         "reductor": [TruncatedSVD()],
          "reductor__n_components": [10],
-         "clf__criterion": ["entropy"]
+         "clf__criterion": ["gini","entropy"]
          }
 
-    grSearch = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, verbose=2)
-    grSearch.fit(X_train, y_train)
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, verbose=2)
+    clf.fit(X_train, y_train)
 
-    print("Best score: %0.3f" % grSearch.best_score_)
-    print("Best parameters set:")
-    print(grSearch.best_params_)
+    report = HypOptReport("tree", clf.cv_results_)
+    report.print()

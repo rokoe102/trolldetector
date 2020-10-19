@@ -6,9 +6,9 @@ from sklearn import metrics
 from sklearn.decomposition import TruncatedSVD, NMF
 from sklearn.pipeline import Pipeline
 from parsing import prepare
+from report.hypoptreport import HypOptReport
 
 # use the KNN method with custom hyperparameters
-
 def trainAndTest(k, metr,  test, cargs):
 
     print("------------------------------------------------------")
@@ -67,10 +67,13 @@ def trainAndTest(k, metr,  test, cargs):
 
     print(metrics.classification_report(y_test, predicted))
 
+
+# hyperparameter optimization for KNN hyperparameters
+
 def optimize(test, verbose):
-    print("-------------------------------------------------------------")
-    print("hyperparameter optimization for: k-Nearest neighbor algorithm")
-    print("-------------------------------------------------------------")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("| hyperparameter optimization for: k-Nearest neighbor algorithm |")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     if verbose:
         print("loading datasets")
 
@@ -89,17 +92,18 @@ def optimize(test, verbose):
         ("clf", KNeighborsClassifier())
     ])
 
-    parameter_space = {"vect__ngram_range": [(1,1),(1,2)],
-                       "vect__stop_words": [None, "english"],
-                       "tfidf__use_idf": (True,False),
-                       "clf__n_neighbors": [5],
+    parameter_space = {#"vect__ngram_range": [(1,1),(1,2)],
+                       #"vect__stop_words": [None, "english"],
+                       #"tfidf__use_idf": (True,False),
+                       "clf__n_neighbors": [5, 10],
                        "clf__metric": ["euclidean", "manhattan", "chebyshev"],
 
     }
 
-    grSearch = GridSearchCV(pipe, parameter_space,n_jobs=5,cv=2,verbose=2)
-    grSearch.fit(X_train, y_train)
+    # execute a grid search: testing every combination of hyperparameters
 
-    print("Best score: %0.3f" % grSearch.best_score_)
-    print("Best parameters set:")
-    print(grSearch.best_params_)
+    clf = GridSearchCV(pipe, parameter_space,n_jobs=5,cv=2,verbose=2)
+    clf.fit(X_train, y_train)
+
+    report = HypOptReport("KNN", clf.cv_results_)
+    report.print()

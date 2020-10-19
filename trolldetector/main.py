@@ -63,7 +63,6 @@ if __name__ == "__main__":
 
     cargs = CommonArguments(args.gram, args.tfidf, args.stop, args.dims, args.verb)
 
-
     if method == "KNN":
         if args.helpKNN == True:
             knn_parser.print_help()
@@ -71,7 +70,6 @@ if __name__ == "__main__":
             knn.optimize(args.tpercKNN, args.verb)
         else:
             knn.trainAndTest(args.kvar, args.metric,  args.tpercKNN, cargs)
-
 
     elif method == "NB":
         if args.helpNB == True:
