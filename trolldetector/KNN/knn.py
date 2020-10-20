@@ -3,21 +3,22 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
-from sklearn.decomposition import TruncatedSVD, NMF
+from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import Pipeline
 from parsing import prepare
 from report.hypoptreport import HypOptReport
 
+
 # use the KNN method with custom hyperparameters
 def trainAndTest(k, metr,  test, cargs):
 
-    print("------------------------------------------------------")
+    print("+--------------------------------------------------------+")
     print("classification technique: k-nearest neighbor algorithm")
     print("selected k value: " + str(k))
     print("selected metric for distance measurement: " + metr)
     cargs.print()
     print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("------------------------------------------------------")
+    print("+--------------------------------------------------------+")
     if cargs.verbose:
         print("loading datasets")
 
@@ -61,9 +62,9 @@ def trainAndTest(k, metr,  test, cargs):
     predicted = knn.predict(X_test)
 
     # report the results
-    print("------------------------------------------------------")
-    print("                       REPORT                         ")
-    print("------------------------------------------------------")
+    print("+----------------------------------------------------+")
+    print("|                      REPORT                        |")
+    print("+----------------------------------------------------+")
 
     print(metrics.classification_report(y_test, predicted))
 
@@ -71,9 +72,9 @@ def trainAndTest(k, metr,  test, cargs):
 # hyperparameter optimization for KNN hyperparameters
 
 def optimize(test, verbose):
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+---------------------------------------------------------------+")
     print("| hyperparameter optimization for: k-Nearest neighbor algorithm |")
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+---------------------------------------------------------------+")
     if verbose:
         print("loading datasets")
 
@@ -92,18 +93,28 @@ def optimize(test, verbose):
         ("clf", KNeighborsClassifier())
     ])
 
-    parameter_space = {#"vect__ngram_range": [(1,1),(1,2)],
-                       #"vect__stop_words": [None, "english"],
-                       #"tfidf__use_idf": (True,False),
-                       "clf__n_neighbors": [5, 10],
-                       "clf__metric": ["euclidean", "manhattan", "chebyshev"],
+    parameter_space = {"vect__ngram_range": [(1,1),(1,2)],
+                       #"vect__ngram_range": [(1,1)],
+                       "vect__stop_words": [None, "english"],
+                       #"vect__stop_words": [None],
+                       "tfidf__use_idf": (True,False),
+                       #"clf__n_neighbors": [5, 10],
+                       "clf__n_neighbors": [5],
+                       #"clf__metric": ["euclidean", "manhattan", "chebyshev"],
+                       "clf__metric": ["euclidean"]
 
+    }
+
+    scorers = {
+        'precision_score': metrics.make_scorer(metrics.precision_score, pos_label="troll"),
+        'recall_score': metrics.make_scorer(metrics.recall_score, pos_label="troll"),
+        'accuracy_score': metrics.make_scorer(metrics.accuracy_score)
     }
 
     # execute a grid search: testing every combination of hyperparameters
 
-    clf = GridSearchCV(pipe, parameter_space,n_jobs=5,cv=2,verbose=2)
+    clf = GridSearchCV(pipe, parameter_space,n_jobs=3,cv=2,scoring=scorers,refit=False,verbose=2)
     clf.fit(X_train, y_train)
 
-    report = HypOptReport("KNN", clf.cv_results_)
+    report = HypOptReport("none", clf.cv_results_)
     report.print()

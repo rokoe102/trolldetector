@@ -4,6 +4,7 @@ from NB import nb
 from SVM import svm
 from dtree import dtree
 from MLP import mlp
+from all import all
 from parsing.commonarguments import CommonArguments
 import time
 
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     subparsers = pparser.add_subparsers(title="classification techniques", dest="command")
 
     # arguments all commands have in common
-    pparser.add_argument("--ngram",dest="gram", metavar="n",type=int,default=1, help="changing the n-gram range to (1,n)")
+    pparser.add_argument("--ngram",dest="gram", metavar="<n>",type=int,default=1, help="changing the n-gram range to (1,n)")
     pparser.add_argument("--tfidf",dest="tfidf", action="store_true", help="changes the feature weighting to TF-IDF")
     pparser.add_argument("--stopwords", dest="stop", action="store_true", help="enables filtering of english stop words")
     pparser.add_argument("--dim", dest="dims",metavar="<components>", type=int,default=10, help="determines the level of dimensionality reduction")
@@ -56,6 +57,9 @@ if __name__ == "__main__":
     mlp_parser.add_argument("-a", dest="actMLP", type=str, default="relu", choices=["relu","tanh","identity","logistic"], help="changes the activation function")
     mlp_parser.add_argument("--test", dest="tpercMLP", metavar="<perc>", type=float, default=0.1, help="changes the proportion of test data")
     mlp_parser.add_argument("-h", dest="helpMLP", action="store_true", help="displays this help message")
+
+    # parser for all command
+    all_parser = subparsers.add_parser("all", add_help=False, help="compare all classificators")
 
     # get arguments
     args = pparser.parse_args()
@@ -102,6 +106,9 @@ if __name__ == "__main__":
             mlp.optimize(args.tpercMLP, args.verb)
         else:
             mlp.trainAndTest(args.actMLP,args.tpercMLP, cargs)
+
+    elif method == "all":
+        all.compare()
 
     # measure and print runtime
     runtime = time.process_time() - start

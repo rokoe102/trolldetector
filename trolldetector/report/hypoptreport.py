@@ -5,9 +5,19 @@ class HypOptReport:
     def __init__(self, technique, results):
         self.technique = technique
 
-        df = pd.DataFrame(list(zip(results["mean_test_score"].tolist(), results["std_test_score"].tolist(), results["params"])), columns=["score","std", "params"])
+        df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(), results["std_test_accuracy_score"].tolist(), results["params"])), columns=["score","std","params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
-        self.results = df
+        self.accuracy = df
+
+        df = pd.DataFrame(list(zip(results["mean_test_precision_score"].tolist(), results["std_test_precision_score"].tolist(), results["params"])),
+                          columns=["score","std", "params"])
+        df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
+        self.precision = df
+
+        df = pd.DataFrame(list(zip(results["mean_test_recall_score"].tolist(), results["std_test_recall_score"].tolist(), results["params"])),
+                          columns=["score","std", "params"])
+        df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
+        self.recall = df
 
         self.combinations = results["params"]
 
@@ -30,17 +40,50 @@ class HypOptReport:
     # print rankings for all combinations and mean scores for the
     # most common hyperparameters (TF/TF-IDF, n-grams, stop words)
 
+    # noinspection PyStringFormat
     def print_common(self):
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|                      REPORT                        |")
         print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-        print("|               ranking of combinations              |")
+        print("|                  accuracy ranking                  |")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
         rank = 1
 
-        zipped = sorted(zip(self.results["score"], self.results["std"], self.combinations),key= lambda t: t[0], reverse=True)
+        zipped = sorted(zip(self.accuracy["score"], self.accuracy["std"], self.combinations),key= lambda t: t[0], reverse=True)
         for mean, std, params in zipped:
+            if rank == 6:
+                break
+            print("[" + str(rank) + "]", end=" ")
+            print("%0.3f (+/-%0.03f) for %r"
+                  % (mean, std * 2, params))
+            rank += 1
+
+        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
+        print("|                 precision ranking                  |")
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        rank = 1
+        zipped = sorted(zip(self.precision["score"], self.precision["std"], self.combinations), key=lambda t: t[0],
+                        reverse=True)
+        for mean, std, params in zipped:
+            if rank == 6:
+                break
+            print("[" + str(rank) + "]", end=" ")
+            print("%0.3f (+/-%0.03f) for %r"
+                  % (mean, std * 2, params))
+            rank += 1
+
+        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
+        print("|                   recall ranking                   |")
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        rank = 1
+        zipped = sorted(zip(self.recall["score"], self.recall["std"], self.combinations), key=lambda t: t[0],
+                        reverse=True)
+        for mean, std, params in zipped:
+            if rank == 6:
+                break
             print("[" + str(rank) + "]", end=" ")
             print("%0.3f (+/-%0.03f) for %r"
                   % (mean, std * 2, params))
@@ -49,62 +92,60 @@ class HypOptReport:
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|            hyperparameters in detail               |")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-        tfidf_score = np.mean(self.results[self.results["tfidf__use_idf"] == True]["score"])
-        tf_score = np.mean(self.results[self.results["tfidf__use_idf"] == False]["score"])
-
         print("              | feature weighting |                   ")
         print("              +-------------------+                   ")
 
-        if tfidf_score > tf_score:
-            print("[1] TF-IDF (mean %0.3f)" % tfidf_score)
-            print("[2] TF (mean %0.3f)" % tf_score)
-        elif tfidf_score < tf_score:
-            print("[1] TF (mean %0.3f)" % tf_score)
-            print("[2] TF-IDF (mean %0.3f)" % tfidf_score)
+        tfidf_score = {"accuracy": np.mean(self.accuracy[self.accuracy["tfidf__use_idf"] == True]["score"]),
+                       "precision": np.mean(self.precision[self.precision["tfidf__use_idf"] == True]["score"]),
+                       "recall": np.mean(self.recall[self.recall["tfidf__use_idf"] == True]["score"]),
+                      }
+        tf_score = {"accuracy": np.mean(self.accuracy[self.accuracy["tfidf__use_idf"] == False]["score"]),
+                    "precision": np.mean(self.precision[self.precision["tfidf__use_idf"] == False]["score"]),
+                    "recall": np.mean(self.recall[self.recall["tfidf__use_idf"] == False]["score"]),
+                   }
 
-        else:
-            print("[1] TF-IDF (mean %0.3f), TF (mean %0.3f)" % (tfidf_score,tf_score))
-
-        stop_score = np.mean(self.results[self.results["vect__stop_words"] == "english"]["score"])
-        nostop_score = np.mean(self.results[self.results["vect__stop_words"].isnull()]["score"])
+        print("      \taccuracy\tprecision\trecall")
+        print("TF    \t%0.3f   \t%0.3f   \t%0.3f" % (tf_score["accuracy"], tf_score["precision"], tf_score["recall"]))
+        print("TF-IDF\t%0.3f   \t%0.3f   \t%0.3f" % (tfidf_score["accuracy"], tfidf_score["precision"], tfidf_score["recall"]))
 
         print("              +---------------------+                ")
         print("              | stop word filtering |                ")
         print("              +---------------------+                ")
 
-        if stop_score > nostop_score:
-            print("[1] english (mean %0.3f)" % stop_score)
-            print("[2] none (mean %0.3f)" % nostop_score)
+        stop_score = {"accuracy": np.mean(self.accuracy[self.accuracy["vect__stop_words"] == "english"]["score"]),
+                       "precision": np.mean(self.precision[self.precision["vect__stop_words"] == "english"]["score"]),
+                       "recall": np.mean(self.recall[self.recall["vect__stop_words"] == "english"]["score"]),
+                       }
+        nostop_score = {"accuracy": np.mean(self.accuracy[self.accuracy["vect__stop_words"].isnull()]["score"]),
+                        "precision": np.mean(self.precision[self.precision["vect__stop_words"].isnull()]["score"]),
+                        "recall": np.mean(self.recall[self.recall["vect__stop_words"].isnull()]["score"]),
+                       }
 
-        elif stop_score < nostop_score:
-            print("[1] none (mean %0.3f)" % nostop_score)
-            print("[2] english (mean %0.3f)" % stop_score)
-
-        else:
-            print("[1] english (mean %0.3f), none (mean %0.3f)" % (stop_score, nostop_score))
-
-        onegram_score = np.mean(self.results[self.results["vect__ngram_range"] == (1, 1)]["score"])
-        twogram_score = np.mean(self.results[self.results["vect__ngram_range"] == (1, 2)]["score"])
+        print("       \taccuracy\tprecision\trecall")
+        print("english\t%0.3f   \t%0.3f   \t%0.3f" % (stop_score["accuracy"], stop_score["precision"], stop_score["recall"]))
+        print("none   \t%0.3f   \t%0.3f   \t%0.3f" % (
+                nostop_score["accuracy"], nostop_score["precision"], nostop_score["recall"]))
 
         print("                +--------------+                    ")
         print("                | n-gram range |                    ")
-        print("                +--------------+")
+        print("                +--------------+                    ")
 
-        if onegram_score > twogram_score:
-            print("[1] 1-grams (mean %0.3f)" % onegram_score)
-            print("[2] 1-grams + 2-grams (mean %0.3f)" % twogram_score)
+        onegram_score = {"accuracy": np.mean(self.accuracy[self.accuracy["vect__ngram_range"] == (1,1)]["score"]),
+                         "precision": np.mean(self.precision[self.precision["vect__ngram_range"] == (1,1)]["score"]),
+                         "recall": np.mean(self.recall[self.recall["vect__ngram_range"] == (1,1)]["score"]),
+                        }
+        twogram_score = {"accuracy": np.mean(self.accuracy[self.accuracy["vect__ngram_range"] == (1,2)]["score"]),
+                         "precision": np.mean(self.precision[self.precision["vect__ngram_range"] == (1,2)]["score"]),
+                         "recall": np.mean(self.recall[self.recall["vect__ngram_range"] == (1,2)]["score"]),
+                        }
 
-        elif onegram_score < twogram_score:
-            print("[1] 1-grams + 2 grams (mean %0.3f)" % twogram_score)
-            print("[2] 1-grams (mean %0.3f)" % onegram_score)
-
-        else:
-            print("[1] 1-grams (mean %0.3f), 1-grams + 2-grams (mean %0.3f)" % (onegram_score, twogram_score))
+        print("      \taccuracy\tprecision\trecall")
+        print("(1,1) \t%0.3f   \t%0.3f   \t%0.3f" % (onegram_score["accuracy"], onegram_score["precision"], onegram_score["recall"]))
+        print("(1,2) \t%0.3f   \t%0.3f   \t%0.3f" % (
+                twogram_score["accuracy"], twogram_score["precision"], twogram_score["recall"]))
 
 
     # print accuracy rankings for KNN specific hyperparameters
-
     def print_knn(self):
         # accuracy ranking of different k values
         print("                 +---------+                        ")
