@@ -3,13 +3,15 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.naive_bayes import GaussianNB, MultinomialNB, ComplementNB
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import Pipeline
 from parsing import prepare
+from report.comparisonreport import ComparisonReport
+
 
 def compare():
     print("+---------------------------------------------------------------+")
@@ -57,26 +59,16 @@ def compare():
                       }
     ]
 
-    #clf = GridSearchCV(pipe, parameter_space, n_jobs=7, cv=4, verbose=2)
-    clf = GridSearchCV(pipe, parameter_space, n_jobs=7, cv=3, verbose=2)
+    scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
+               "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
+               "accuracy_score": metrics.make_scorer(metrics.accuracy_score),
+               "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
+               }
+
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
-
-
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print("|                      REPORT                        |")
-    print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-    print("|             ranking of classificators              |")
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     results = clf.cv_results_
 
-    rank = 1
-    zipped = sorted(zip(results["mean_test_accuracy_score"], results["std_test_accuracy_score"], results["params"]), key=lambda t: t[0],
-                    reverse=True)
-    for mean, std, params in zipped:
-        print("[" + str(rank) + "]", end=" ")
-        print("%0.3f (+/-%0.03f) for %r"
-              % (mean, std * 2, params["clf"]))
-        rank += 1
-
-    ### als nächstes: andere Scoring-Metriken für alle Reports einfügen
+    report = ComparisonReport(results)
+    report.print()

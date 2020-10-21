@@ -102,13 +102,16 @@ def optimize(test, verbose):
 
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
                "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
-               "accuracy_score": metrics.make_scorer(metrics.accuracy_score)
+               "accuracy_score": metrics.make_scorer(metrics.accuracy_score),
+               "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
               }
 
     # execute a grid search: testing every combination of hyperparameters
 
     clf = GridSearchCV(pipe, parameter_space,n_jobs=6,cv=2,scoring=scorers,refit=False,verbose=3)
     clf.fit(X_train, y_train)
+
+    print(clf.cv_results_)
 
     report = HypOptReport("KNN", clf.cv_results_)
     report.print()

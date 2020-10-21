@@ -92,7 +92,8 @@ def optimize(test, verbose):
 
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
                "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
-               "accuracy_score": metrics.make_scorer(metrics.accuracy_score)
+               "accuracy_score": metrics.make_scorer(metrics.accuracy_score),
+               "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
                }
 
     clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2,scoring=scorers,refit=False, verbose=2)
