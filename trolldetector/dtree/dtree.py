@@ -86,13 +86,18 @@ def optimize(test, verbose):
     ])
 
     parameter_space = {"vect__ngram_range": [(1, 1), (1, 2)],
-         "vect__stop_words": [None, "english"],
-         "tfidf__use_idf": (True, False),
-         "reductor__n_components": [10],
-         "clf__criterion": ["gini","entropy"]
-         }
+                       "vect__stop_words": [None, "english"],
+                       "tfidf__use_idf": (True, False),
+                       "reductor__n_components": [10],
+                       "clf__criterion": ["gini","entropy"]
+                      }
 
-    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, verbose=2)
+    scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
+               "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
+               "accuracy_score": metrics.make_scorer(metrics.accuracy_score)
+               }
+
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
 
     report = HypOptReport("tree", clf.cv_results_)

@@ -90,7 +90,12 @@ def optimize(test, verbose):
                        "clf__n_iter_no_change": [5]
                        }
 
-    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, verbose=2)
+    scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
+               "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
+               "accuracy_score": metrics.make_scorer(metrics.accuracy_score)
+               }
+
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
 
     report = HypOptReport("MLP", clf.cv_results_)

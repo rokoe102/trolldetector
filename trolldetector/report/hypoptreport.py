@@ -152,28 +152,30 @@ class HypOptReport:
         print("                 | k value |                        ")
         print("                 +---------+                        ")
 
-        k_scores = []
-        for k in self.results["clf__n_neighbors"].unique():
-            k_scores.append(np.mean(self.results[self.results["clf__n_neighbors"] == k]["score"]))
+        print("         \taccuracy\tprecision\trecall")
 
-        rank = 1
-        for score, k in sorted(zip(k_scores, self.results["clf__n_neighbors"].unique()), reverse=True):
-            print("[" + str(rank) + "] k = " + str(k) + " (mean %0.3f)" % score)
-            rank += 1
+        for k in self.accuracy["clf__n_neighbors"].unique():
+            k_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__n_neighbors"] == k]["score"]),
+                       "precision": np.mean(self.precision[self.precision["clf__n_neighbors"] == k]["score"]),
+                       "recall": np.mean(self.recall[self.recall["clf__n_neighbors"] == k]["score"]),
+                      }
+                      
+            print("%-9s\t%0.3f\t\t%0.3f\t\t%0.3f" % ("k = " + str(k), k_score["accuracy"], k_score["precision"], k_score["recall"]))
 
-        # accuracy ranking of the three metrics
+        # scoring of the three metrics
         print("                 +---------+                        ")
         print("                 | metrics |                        ")
         print("                 +---------+                        ")
 
-        metric_scores = []
-        for metric in self.results["clf__metric"].unique():
-            metric_scores.append(np.mean(self.results[self.results["clf__metric"] == metric]["score"]))
+        print("          \taccuracy\tprecision\trecall")
 
-        rank = 1
-        for score, metric in sorted(zip(metric_scores, self.results["clf__metric"].unique()), reverse=True):
-            print("[" + str(rank) + "] " + metric + " (mean %0.3f)" % score)
-            rank += 1
+        for metric in self.accuracy["clf__metric"].unique():
+            metric_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__metric"] == k]["score"]),
+                            "precision": np.mean(self.precision[self.precision["clf__metric"] == k]["score"]),
+                            "recall": np.mean(self.recall[self.recall["clf__metric"] == k]["score"]),
+                            }
+
+            print("%-10s\t%0.3f\t\t%0.3f\t\t%0.3f" % (metric, k_score["accuracy"], k_score["precision"], k_score["recall"]))
 
 
     def print_nb(self):
@@ -183,15 +185,18 @@ class HypOptReport:
         print("           | presumed distribution |                 ")
         print("           +-----------------------+                 ")
 
-        dist_scores = []
-        for dist in self.results["clf"].unique():
-            dist_scores.append(np.mean(self.results[self.results["clf"] == dist]["score"]))
+        print("               \taccuracy\tprecision\trecall")
 
-        rank = 1
+        for dist in self.accuracy["clf"].unique():
+            dist_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf"] == dist]["score"]),
+                          "precision": np.mean(self.precision[self.precision["clf"] == dist]["score"]),
+                          "recall": np.mean(self.recall[self.recall["clf"] == dist]["score"])
+                         }
 
-        for score, dist in sorted(zip(dist_scores, self.results["clf"].unique()), reverse=True):
-            print("[" + str(rank) + "] " + str(dist) + " (mean %0.3f)" % score)
-            rank += 1
+
+            print("%-15s\t%0.3f\t\t%0.3f\t\t%0.3f" % (
+            dist, dist_score["accuracy"], dist_score["precision"], dist_score["recall"]))
+
 
     def print_svm(self):
         # accuracy ranking of C value
@@ -199,39 +204,47 @@ class HypOptReport:
         print("                  | C value |                 ")
         print("                  +------ --+                 ")
 
-        c_scores = []
-        for c in self.results["clf__C"].unique():
-            c_scores.append(np.mean(self.results[self.results["clf__C"] == c]["score"]))
+        print("      \taccuracy\tprecision\trecall")
 
-        rank = 1
-        for score, c in sorted(zip(c_scores, self.results["clf__C"].unique()), reverse=True):
-            print("[" + str(rank) + "] " + str(c) + " (mean %0.3f)" % score)
-            rank += 1
+        for c in self.accuracy["clf__C"].unique():
+            c_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__C"] == c]["score"]),
+                          "precision": np.mean(self.precision[self.precision["clf__C"] == c]["score"]),
+                          "recall": np.mean(self.recall[self.recall["clf__C"] == c]["score"])
+                          }
+
+            print("%-6s\t%0.3f\t\t%0.3f\t\t%0.3f" % (
+                str(c), c_score["accuracy"], c_score["precision"], c_score["recall"]))
+
+
 
     def print_dt(self):
         print("                  +-----------+                 ")
         print("                  | criterion |                 ")
         print("                  +-----------+                 ")
 
-        crit_scores = []
-        for criterion in self.results["clf__criterion"].unique():
-            crit_scores.append(np.mean(self.results[self.results["clf__criterion"] == criterion]["score"]))
+        print("       \taccuracy\tprecision\trecall")
 
-        rank = 1
-        for score, criterion in sorted(zip(crit_scores, self.results["clf__criterion"].unique()), reverse=True):
-            print("[" + str(rank) + "] " + str(criterion) + " (mean %0.3f)" % score)
-            rank += 1
+        for criterion in self.accuracy["clf__criterion"].unique():
+            crit_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__criterion"] == criterion]["score"]),
+                       "precision": np.mean(self.precision[self.precision["clf__criterion"] == criterion]["score"]),
+                       "recall": np.mean(self.recall[self.recall["clf__criterion"] == criterion]["score"])
+                       }
+
+            print("%-7s\t%0.3f\t\t%0.3f\t\t%0.3f" % (
+                criterion, crit_score["accuracy"], crit_score["precision"], crit_score["recall"]))
 
     def print_mlp(self):
         print("           +---------------------+                 ")
         print("           | activation function |                 ")
         print("           +---------------------+                 ")
 
-        act_scores = []
-        for activation_function in self.results["clf__activation"].unique():
-            act_scores.append(np.mean(self.results[self.results["clf__activation"] == activation_function]["score"]))
+        print("        \taccuracy\tprecision\trecall")
 
-        rank = 1
-        for score, activation_function in sorted(zip(act_scores, self.results["clf__activation"].unique()), reverse=True):
-            print("[" + str(rank) + "] " + str(activation_function) + " (mean %0.3f)" % score)
-            rank += 1
+        for activation in self.accuracy["clf__activation"].unique():
+            act_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__activation"] == activation]["score"]),
+                         "precision": np.mean(self.precision[self.precision["clf__activation"] == activation]["score"]),
+                         "recall": np.mean(self.recall[self.recall["clf__activation"] == activation]["score"])
+                        }
+
+            print("%-8s\t%0.3f\t\t%0.3f\t\t%0.3f" % (
+                activation, act_score["accuracy"], act_score["precision"], act_score["recall"]))

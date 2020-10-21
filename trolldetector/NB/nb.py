@@ -12,12 +12,12 @@ from report.hypoptreport import HypOptReport
 
 def trainAndTest(test,dist,cargs):
 
-    print("------------------------------------------------------")
+    print("+----------------------------------------------------+")
     print("classification technique: Naive Bayes classifyer")
     print("presumed distribution: " + dist)
     cargs.print()
     print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("------------------------------------------------------")
+    print("+----------------------------------------------------+")
     if cargs.verbose:
         print("loading datasets")
 
@@ -152,7 +152,12 @@ def optimize(test, verbose):
                       }
     ]
 
-    clf = GridSearchCV(pipe, parameter_space, n_jobs=5,cv=2, verbose=2)
+    scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll", zero_division=1),
+               "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
+               "accuracy_score": metrics.make_scorer(metrics.accuracy_score)
+               }
+
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5,cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
 
     report = HypOptReport("NB", clf.cv_results_)
