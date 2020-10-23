@@ -8,6 +8,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
 from parsing import prepare
 from report.hypoptreport import HypOptReport
+from memory import memory
 
 
 def trainAndTest(test,dist,cargs):
@@ -141,14 +142,16 @@ def optimize(test, verbose):
                        "vect__stop_words": [None, "english"],
                        "tfidf__use_idf": (True, False),
                        "scaling": [None],
-                       "clf": [GaussianNB()]
+                       "clf": [GaussianNB()],
+                       "clf__random_state": [42]
                       },
                       {
                        "vect__ngram_range": [(1,1),(1,2)],
                        "vect__stop_words": [None, "english"],
                        "tfidf__use_idf": (True, False),
                        "scaling": [MinMaxScaler()],
-                       "clf": [MultinomialNB(),ComplementNB()]
+                       "clf": [MultinomialNB(),ComplementNB()],
+                       "clf__random_state": [42]
                       }
     ]
 
@@ -160,6 +163,8 @@ def optimize(test, verbose):
 
     clf = GridSearchCV(pipe, parameter_space, n_jobs=5,cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
+
+    memory.save(clf.cv_results_, "NB")
 
     report = HypOptReport("NB", clf.cv_results_)
     report.print()

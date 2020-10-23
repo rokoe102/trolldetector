@@ -7,6 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 from parsing import prepare
 from report.hypoptreport import HypOptReport
+from memory import memory
 
 def trainAndTest(test,cost,cargs):
 
@@ -88,8 +89,11 @@ def optimize(test, verbose):
     parameter_space = {"vect__ngram_range": [(1, 1), (1, 2)],
                        "vect__stop_words": ["english", None],
                        "tfidf__use_idf": (True, False),
-                       "clf__C": [1, 0.75, 0.5]
+                       "clf__C": [1, 0.75, 0.5],
+                       "clf": [LinearSVC()],
+                       "clf__random_state": [42]
                       }
+
 
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
                "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
@@ -99,6 +103,8 @@ def optimize(test, verbose):
 
     clf = GridSearchCV(pipe, parameter_space, n_jobs=4, cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
+
+    memory.save(clf.cv_results_, "SVM")
 
     report = HypOptReport("SVM", clf.cv_results_)
     report.print()

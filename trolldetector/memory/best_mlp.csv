@@ -1,0 +1,11 @@
+score,0.8985273872005493
+clf,MLPClassifier()
+clf__activation,relu
+clf__early_stopping,True
+clf__max_iter,50
+clf__n_iter_no_change,5
+clf__random_state,42
+clf__tol,0.005
+tfidf__use_idf,False
+vect__ngram_range,"(1, 2)"
+vect__stop_words,None

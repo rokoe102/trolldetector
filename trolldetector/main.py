@@ -108,7 +108,7 @@ if __name__ == "__main__":
             mlp.trainAndTest(args.actMLP,args.tpercMLP, cargs)
 
     elif method == "all":
-        all.compare()
+        all.compare(args.verb)
 
     # measure and print runtime
     runtime = time.process_time() - start

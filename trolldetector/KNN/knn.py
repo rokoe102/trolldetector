@@ -7,6 +7,7 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import Pipeline
 from parsing import prepare
 from report.hypoptreport import HypOptReport
+from memory import memory
 
 
 # use the KNN method with custom hyperparameters
@@ -93,11 +94,13 @@ def optimize(test, verbose):
         ("clf", KNeighborsClassifier())
     ])
 
-    parameter_space = {"vect__ngram_range": [(1,1),(1,2)],
+    parameter_space = {"clf": [KNeighborsClassifier()],
+                       "vect__ngram_range": [(1,1),(1,2)],
                        "vect__stop_words": [None, "english"],
                        "tfidf__use_idf": (True,False),
                        "clf__n_neighbors": [5, 13],
                        "clf__metric": ["euclidean", "manhattan", "chebyshev"],
+                       "clf__random_state": [42]
     }
 
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
@@ -111,7 +114,7 @@ def optimize(test, verbose):
     clf = GridSearchCV(pipe, parameter_space,n_jobs=6,cv=2,scoring=scorers,refit=False,verbose=3)
     clf.fit(X_train, y_train)
 
-    print(clf.cv_results_)
+    memory.save(clf.cv_results_, "KNN")
 
     report = HypOptReport("KNN", clf.cv_results_)
     report.print()

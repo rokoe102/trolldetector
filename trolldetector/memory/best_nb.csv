@@ -1,0 +1,6 @@
+score,0.8094645720008918
+clf,GaussianNB()
+scaling,None
+tfidf__use_idf,False
+vect__ngram_range,"(1, 2)"
+vect__stop_words,english

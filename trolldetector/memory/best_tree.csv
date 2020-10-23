@@ -1,0 +1,7 @@
+score,0.8975665259290979
+clf,DecisionTreeClassifier()
+clf__criterion,gini
+clf__random_state,42
+tfidf__use_idf,False
+vect__ngram_range,"(1, 1)"
+vect__stop_words,english

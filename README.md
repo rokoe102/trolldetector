@@ -15,7 +15,8 @@ pip install .
 ```
 
 ##Usage
-(use "python trolldetector/main.py" instead of "trolldetector" as the project is not finished yet)
+
+(use "python main.py" instead of "trolldetector" as the project is not finished yet)
 ### custom hyperparameters
 If you wish to execute any classification technique with custom hyperparameters, execute the program in the following manner:
 
@@ -39,7 +40,7 @@ NB specific options:
 - ``` -d {gaussian, multinomial, complement}``` changes the assumed distribution (default: gaussian)
 
 SVM specific options:
-- ```--cost <(0,1)>``` changes the degree of misclassification penalty (default: 1)
+- ```--cost <[0,1]>``` changes the degree of misclassification penalty (default: 1)
 
 tree specific options:
 - ```-m {gini, entropy}``` changes the metric used to determine the best split (default: gini)

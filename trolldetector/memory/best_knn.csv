@@ -1,0 +1,7 @@
+score,0.9151628509444045
+clf,KNeighborsClassifier()
+clf__metric,euclidean
+clf__n_neighbors,13
+tfidf__use_idf,False
+vect__ngram_range,"(1, 1)"
+vect__stop_words,english
