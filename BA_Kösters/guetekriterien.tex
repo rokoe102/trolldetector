@@ -1,0 +1,65 @@
+\section{Gütekriterien}\raggedbottom
+Die bereits besprochenen Klassifikationsverfahren werden nach dem \glqq Train-and-Test\grqq-Prinzip auf den vorliegenden Datensatz angewandt. Die Grundmenge der Tweets wird hierbei in eine Trainings- und eine Testmenge aufgeteilt. Die Trainingsmenge dient dem jeweiligen Verfahren als Lerneingabe, während die Testmenge zur Beurteilung der Performance herangezogen wird. Nach der abgeschlossenen Testklassifikation liegen Ergebnisse in Form der den Tweets zugeordneten Labels (Troll oder Nichttroll) vor. An diesem Punkt muss nun geklärt werden, in welcher Weise eine Auswertung vorgenommen werden kann. Wie kann die Qualität eines binären Klassifikators gemessen werden? Was für eine Aussagekraft haben verschiedene Gütekriterien? Welche Nachteile gibt es? Welche Kriterien zeigen die Stärken, welche die Schwächen eines Verfahrens auf? Diese Fragen sollen in diesem Kapitel besprochen werden, ehe die Ergebnisse evaluiert werden können. Neben Qualität im Sinne von korrekt oder falsch soll es hier auch um Qualität im Sinne von schnell (Zeitkomplexität) gehen. 
+\subsection{Konfusionsmatrix}
+Da bei den Tweets der Testmenge im Voraus die richtige Klasse bekannt war, kann für jedes klassifizierte Element eine Korrekt- oder Falschklassifizierung festgestellt werden. Typischerweise wird bei einer binären Klassifikation eine der beiden Klassen als positiv (im Sinne von \glqq bestätigend\grqq) und die andere als negativ aufgefasst. Der gegebene Zweck der Arbeit (Trollerkennung) und die Semantik der beiden Labelbezeichnungen legen in diesem Fall nahe, dass \glqq Troll\grqq{} als positiv (\glqq Troll gefunden\grqq) und \glqq Nichttroll\grqq{} als negativ (\glqq keinen Troll gefunden\grqq) aufgefasst wird. Kombiniert ergeben sich hieraus nun folgende Kennzahlen:
+\begin{itemize}
+\item $r_p$ ist die Anzahl richtig positiver, $r_n$ die Anzahl richtig negativer Klassifizierungen.
+\item $f_p$ bezeichnet die Anzahl falsch positiver, $f_n$ die Zahl falsch negativer Klassifizierungen.
+\end{itemize}
+Eine häufige Darstellung von Korrekt- und Falschklassifikation ist die sogenannte Konfusionsmatrix oder Wahrheitsmatrix (siehe Tabelle \ref{confusion_matrix}), in welcher die genannten Kennwerte direkt ablesbar sind.
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{c|c|c|c|}
+			\multicolumn{2}{c}{}&\multicolumn{2}{c}{korrekte Klasse}\\
+			\cline{2-4}
+			&&Troll ($r_p + f_n$)&Nichttroll ($f_p + r_n$)\\
+			\cline{2-4}
+			Test-& Troll ($r_p + f_p$) & $r_p$ & $f_p$\\
+			\cline{2-4}
+			ergebnis& Nichttroll ($f_n + r_n$) &$f_n$ & $r_n$\\
+			\cline{2-4}
+		\end{tabular}
+		\caption{Konfusionsmatrix der Trollerkennung}\label{confusion_matrix}
+	\end{center}
+\end{table}\\
+Die genannte Werte bilden die Berechnungsgrundlage aller nachfolgend genannten Gütemaße. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.
+\subsection{Treffergenauigkeit}
+Die Treffergenauigkeit (engl. \textbf{accuracy}) ist das am häufigsten für die Auswertung von Klassifikationsergebnissen gebrauchte Gütemaß. Sie ist folgendermaßen definiert:
+\begin{equation}
+	accuracy = \frac{r_p + r_n}{r_p + f_p + r_n + f_n} = \frac{r_p + r_n}{N}
+	\label{acc}
+\end{equation}
+Wie Formel \ref{acc} zu entnehmen ist, handelt es sich hierbei um den Anteil der richtig klassifizierten Objekte an der Gesamtzahl $N$ aller Objekte. Deshalb nennt man dieses Maß auch Korrektklassifizierungsrate.\\
+Die Treffergenauigkeit ist von allen Maßen in der Gesamtschau am intuitivsten, da sie die Verlässlichkeit der Klassifikation, also die Wahrscheinlichkeit, dass die getroffene Vorhersage korrekt ist, misst. Für die Trollerkennung ist dies von besonderer Bedeutung: Sowohl das Nichterkennen eines Trolls als auch die \glqq Falschbeschuldigung\grqq eines echten Benutzers können kritische Konsequenzen nach sich ziehen. Aus diesem Grund ist es wichtig zu wissen, mit welcher Wahrscheinlichkeit eine Verwechslung auszuschließen ist. 
+\subsection{Sensitivität und Spezifität}
+Die \textbf{Sensitivität} (engl. \textit{recall}) ist ähnlich definiert wie die Treffergenauigkeit, mit dem Unterschied, dass hier die positiven Werte (Trollmenge) isoliert betrachtet werden. Man könnte sie aus diesem Grund auch als \glqq Troll-Korrektklassifizierungsrate\grqq{} bezeichnen. Sie beschreibt demnach den Anteil der richtig erkannten Troll-Tweets an der Gesamtzahl aller Troll-Tweets.
+\begin{equation}
+recall = \frac{r_p}{r_p + f_n}
+\label{prec}
+\end{equation}
+Analog dazu ist die \textbf{Spezifität} (engl. \textit{specifity}) definiert, sie gibt den Anteil der korrekt als Nichtroll-Tweets erkannten Texte an der Gesamtzahl aller Nichttroll-Tweets an.
+\begin{equation}
+specifity = \frac{r_n}{r_n + f_p}
+\end{equation}
+Die Betrachtung dieser Werte ist vor allem dann von Vorteil, wenn sie sich merkbar voneinander unterscheiden. In diesem Fall liefert die Treffergenauigkeit allein nicht genügend Aufschluss über die Korrektklassifizierung von Trollen und Nichtrollen und es lohnt sich, diese Einzelbetrachtung vorzunehmen.\\Auch wenn eine Verwechslung, wie bereits ausgeführt, in jedem Fall problematisch ist, so ist die Falschklassifizierung eines realen Users besonders verheerend, da die getroffenen Gegenmaßnahmen (i.d.R. Sperrungen) unrechtmäßig wären. Aus diesem Grund ist die Spezifität für die Trollerkennung, sofern damit Gegenmaßnahmen einhergehen, von besonderer Bedeutung. Da Trolle speziell in großer Gruppenzahl Wirksamkeit erreichen, ist das fälschliche \glqq Freisprechen\grqq{} einiger Trolle weniger kritisch, solange der Rest überwiegend korrekt klassifiziert wird. Dies macht die Sensitivität zweitrangig, aber dennoch wichtig. Diese Art der Klassifikation, bei der $f_p$ besonders niedrig gehalten werden soll, nennt man \textbf{konservative} Klassifikation.
+\subsection{Relevanz und Segreganz}
+Die \textbf{Relevanz} (engl. \textit{precision}) verfolgt im Vergleich zur Sensitivität einen umgekehrten Ansatz. Während letztere die Frage \glqq Wieviel Prozent der Trolle werden richtig erkannt?\grqq{} beantwortet, geht es hier um die Behandlung der Frage \glqq Wieviel Prozent der Troll-Vorhersagen stimmen?\grqq{}. Definiert ist die Relevanz als Anteil der richtig positiven Vorhersagen an der Gesamtzahl aller positiven Vorhersagen.
+\begin{equation}
+precision = \frac{r_p}{r_p + f_p}
+\end{equation}
+Das negative Äquivalent zur Relevanz ist die \textbf{Segreganz} (engl. \textit{negative predictive value}, NPV). Sie beschreibt das Verhältnis von den korrekt negativen Vorhersagen an der Gesamtzahl aller negativen Vorhersagen.
+\begin{equation}
+NPV = \frac{r_n}{r_n + f_n}
+\end{equation}
+Der Fokus bei diesen Maßen liegt nicht auf der Abdeckung der jeweiligen Klassen, sondern auf der Vorhersagegenauigkeit. Es gelten hier ähnliche Implikationen im Bezug auf sich ergebende Probleme wie bei den zuletztgenannten Maßen.
+\subsection{F-Score}
+Der \textbf{F-Score} kombiniert die bereits beschriebenen Gütemaße Sensitivität und Relevanz und setzt sie mittels des harmonischen Mittels zueinander in Beziehung.
+\begin{equation}
+	F_\alpha = (1 + \alpha^2) \cdot \frac{precision \cdot recall}{\alpha^2 \cdot precision + recall}
+	\label{f_one}
+\end{equation}
+Formel \ref{f_one} zeigt die Formel für ein allgemeines $\alpha$, welches die gewählte Gewichtung beschreibt. Die am häufigsten verwendete Gewichtung ist $\alpha = 1$:
+\begin{equation}
+	F_1 = 2 \cdot \frac{precision \cdot recall}{precision + recall}
+\end{equation}
+\pagebreak

@@ -3,7 +3,7 @@
 
 1\. Clone this repository
 ```
-git clone https://git.hhu.de/rokoe102/trolldetector
+git clone https://github.com/rokoe102/trolldetector
 ```
 2\. change the directory
 ```
@@ -14,7 +14,7 @@ cd path/to/directory/trolldetector
 pip install .
 ```
 
-##Usage
+## Usage
 
 (use "python main.py" instead of "trolldetector" as the project is not finished yet)
 ### custom hyperparameters

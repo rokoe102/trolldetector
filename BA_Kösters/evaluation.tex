@@ -2,13 +2,16 @@
 Im nachfolgenden Kapitel werden die Ergebnisse der praktischen Anwendung der Techniken aus Kapitel \ref{clf} auf die vorliegenden Datensätze in ausführlicher Weise ausgewertet. Hierfür wurde für jedes Verfahren eine Hyperparameteroptimierung durchgeführt, um herauszufinden, wie sich unterschiedliche Kombinationen aus  Merkmalsextraktion und den einstellbaren Hyperparametern qualitativ unterscheiden. Weiterhin sollen bestehende \textit{Trade-offs} (z.B. Qualität vs. Performance) erörtert werden.
 \subsection{Implementierung} 
 Zwecks Nachvollziehbarkeit und Transparenz soll an dieser Stelle kurz auf die parallel erfolgte praktische Anwendung der beschriebenen Techniken eingegangen werden.\\
-Im Rahmen dieser Abschlussarbeit wurde ein Kommandozeilen-Tool namens \glqq TrollDetector\grqq{} \footnote{\url{https://github.com/rokoe102/trolldetector}} in der Programmiersprache Python entwickelt. Dieses hat mehrere Funktionen. Zum einen ist damit möglich, ein beliebiges Klassifikationsverfahren mit selbst gewählten Hyperparametern auf den Datensatz anzuwenden. Die Menge der Tweets wird nach einem selbst bestimmten Verhältnis in eine Trainingsmenge und eine Testmenge aufgeteilt. Die Trainingsmenge dient dem jeweiligen Verfahren als Lerneingabe, während die Testmenge zur Klassifikation und zur anschließenden Beurteilung herangezogen werden. Hier sind auch Merkmalsextraktion (z.B. TF vs. TF-IDF) und Dimensionalitätsreduktion direkt steuerbar.\\
+Im Rahmen dieser Abschlussarbeit wurde ein Kommandozeilen-Tool namens \glqq TrollDetector\grqq{} \footnote{\url{https://github.com/rokoe102/trolldetector}} in der Programmiersprache Python entwickelt. Dieses hat mehrere Funktionen. Zum einen ist damit möglich, ein beliebiges Klassifikationsverfahren mit selbst gewählten Hyperparametern auf den Datensatz anzuwenden. Dies geschieht nach dem bereits erwähnten \glqq Train-and-Test\grqq-Verfahren. Hier sind auch Merkmalsextraktion (z.B. TF vs. TF-IDF) und Dimensionalitätsreduktion direkt steuerbar.\\
 Eine weitere Funktion ist die Hyperparameteroptimierung für jedes Verfahren mit anschließender Auswertung der Ergebnisse. Für die Optimierung wird eine Rastersuche verwendet. Bei dieser Methode wird das jeweilige Klassifikationsverfahren auf einer fest definierten Untermenge aller möglichen Kombinationen von Hyperparametern ausgeführt. Anschließend werden die Ergebnisse der Kombinationen ausgewertet.\\
-Schließlich ist es mit dem Programm noch möglich, einen Vergleich der fünf Klassifikatoren anzustellen. Die voreingestellten Hyperparameter sind jene, welche bei der Hyperparameteroptimierung am besten abgeschnitten haben.\\
+Schließlich ist es mit dem Programm noch möglich, einen Vergleich der fünf Klassifikatoren anzustellen. Die voreingestellten Hyperparameter sind jene, welche bei der Hyperparameteroptimierung am besten abgeschnitten haben, sodass eine Vergleichbarkeit hergestellt wird.\\
 Zur Verarbeitung und Klassifikation des Datensatzes wurden ausschließlich Klassen und Funktionen aus der \glqq scikit-learn\grqq-Bibliothek von \citet{scikit-learn} verwendet.
-\subsection{Gütekriterien}
-Bevor eine Bewertung vorgenommen werden kann, [...]
-
 \pagebreak\pagebreak
-\subsection{Ergebnisse}
+\subsection{Verfahren im Einzelnen}
 Lorem ipsum dolor sit amet.
+\pagebreak Lorem ipsum dolor sit amet.\\
+\pagebreak Lorem ipsum dolor sit amet.\\
+\pagebreak Lorem ipsum dolor sit amet.\\
+\pagebreak Lorem ipsum dolor sit amet.\\
+\pagebreak Lorem ipsum dolor sit amet.\\
+\subsection{Verfahren im Vergleich}
