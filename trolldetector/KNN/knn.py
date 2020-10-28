@@ -100,14 +100,15 @@ def optimize(test, verbose):
                        "tfidf__use_idf": (True,False),
                        "clf__n_neighbors": [5, 13],
                        "clf__metric": ["euclidean", "manhattan", "chebyshev"],
-                       "clf__random_state": [42]
     }
 
-    scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
+    scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll",zero_division=True),
+               "npv_score": metrics.make_scorer(metrics.precision_score, pos_label="nontroll",zero_division=True),
                "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
+               "specifity_score": metrics.make_scorer(metrics.recall_score, pos_label="nontroll"),
                "accuracy_score": metrics.make_scorer(metrics.accuracy_score),
                "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
-              }
+               }
 
     # execute a grid search: testing every combination of hyperparameters
 

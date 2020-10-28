@@ -1,4 +1,4 @@
-score,0.8274024186099187
+score,0.8274590439518825
 clf,LinearSVC()
 clf__C,0.5
 clf__random_state,42

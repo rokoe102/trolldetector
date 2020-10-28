@@ -1,4 +1,4 @@
-score,0.8094645720008918
+score,0.8094716501686373
 clf,GaussianNB()
 scaling,None
 tfidf__use_idf,False

@@ -11,9 +11,20 @@ class ComparisonReport:
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.precision = df
 
+        df = pd.DataFrame(list(zip(results["mean_test_npv_score"].tolist(), results["params"])),
+                          columns=["score", "params"])
+        df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
+        self.npv = df
+
+
         df = pd.DataFrame(list(zip(results["mean_test_recall_score"].tolist(),results["params"])), columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.recall = df
+
+        df = pd.DataFrame(list(zip(results["mean_test_specifity_score"].tolist(), results["params"])),
+                          columns=["score", "params"])
+        df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
+        self.specifity = df
 
         df = pd.DataFrame(list(zip(results["mean_test_f1_score"].tolist(), results["params"])),
                           columns=["score", "params"])
@@ -40,20 +51,22 @@ class ComparisonReport:
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
-        print("                      \taccuracy\tprecision\trecall\t\tf1")
+        print("                      \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
 
         for clf in self.accuracy["clf"].unique():
             clf_score = {"accuracy": self.accuracy[self.accuracy["clf"] == clf]["score"],
                          "precision": self.precision[self.precision["clf"] == clf]["score"],
+                         "npv": self.npv[self.npv["clf"] == clf]["score"],
                          "recall": self.recall[self.recall["clf"] == clf]["score"],
+                         "specifity": self.specifity[self.specifity["clf"] == clf]["score"],
                          "f1": self.f_one[self.f_one["clf"] == clf]["score"]
                         }
 
             name = str(clf)
             bracket = name.find("(")
 
-            print("%-23s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
-                   name[:bracket], clf_score["accuracy"], clf_score["precision"], clf_score["recall"], clf_score["f1"]))
+            print("%-23s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
+                   name[:bracket], clf_score["accuracy"], clf_score["precision"], clf_score["npv"], clf_score["recall"], clf_score["specifity"], clf_score["f1"]))
 
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|                    mean runtime                    |")

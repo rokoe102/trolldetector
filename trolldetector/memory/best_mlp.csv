@@ -1,4 +1,4 @@
-score,0.8985273872005493
+score,0.8986158642973681
 clf,MLPClassifier()
 clf__activation,relu
 clf__early_stopping,True

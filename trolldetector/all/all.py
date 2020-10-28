@@ -43,7 +43,9 @@ def compare(verbose):
 
 
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
+               "npv_score": metrics.make_scorer(metrics.precision_score, pos_label="nontroll"),
                "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
+               "specifity_score": metrics.make_scorer(metrics.recall_score, pos_label="nontroll"),
                "accuracy_score": metrics.make_scorer(metrics.accuracy_score),
                "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
                }

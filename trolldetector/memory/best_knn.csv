@@ -1,6 +1,6 @@
-score,0.9151628509444045
+score,0.9151451555250407
 clf,KNeighborsClassifier()
-clf__metric,euclidean
+clf__metric,manhattan
 clf__n_neighbors,13
 tfidf__use_idf,False
 vect__ngram_range,"(1, 1)"
