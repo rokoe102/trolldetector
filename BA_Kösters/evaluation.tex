@@ -8,10 +8,99 @@ Schließlich ist es mit dem Programm noch möglich, einen Vergleich der fünf Kl
 Zur Verarbeitung und Klassifikation des Datensatzes wurden ausschließlich Klassen und Funktionen aus der \glqq scikit-learn\grqq-Bibliothek von \citet{scikit-learn} verwendet.
 \pagebreak\pagebreak
 \subsection{Verfahren im Einzelnen}
+Zu Beginn soll jedes Verfahren einzeln auf die Eignung als Trollerkennungsinstrument untersucht werden. Hierzu werden die Ergebnisse der Hyperparameteroptimierungen diskutiert. Folgende Hyperparameter teilen sich dabei alle Verfahren, da die Merkmalsextraktion bei ihnen gleich abläuft:
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{|c|c|}
+			\hline
+			Hyperparameter & gewählte Werte \\ \hline \hline
+			Merkmalgewichtung & TF, TF-IDF \\ \hline
+			Stoppwort-Filterung & keine, englisch\\ \hline
+			n-Gramm-Extraktion & 1-Gramme, 1+2-Gramme\\ \hline			
+		\end{tabular}
+		\caption{gemeinsame Hyperparameter aller Verfahren}\label{common-params}
+	\end{center}
+\end{table}\\
+Alle anderen Parameter sind verfahrensspezifisch.
+\subsubsection{k-Nearest-Neighbor-Algorithmus}
+Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahren geteilt werden, die Abstandsmetrik und der k-Wert für die zu untersuchenden Nachbarn gegeben.\\
+Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse verschiedener Ausprägungen aller Hyperparameter einerseits im Vergleich untereinander und im Vergleich zur durchschnittlichen und zur besten Performance. Hieraus lassen sich verschiedene Schlussfolgerungen ziehen:\\
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline 
+			Hyperparameter & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
+			TF & \textbf{0.951} & \textbf{0.937} & 0.965 & 0.964 & \textbf{0.937} & \textbf{0.949} \\ \hline
+			TF-IDF  & 0.949 & 0.932 & \textbf{0.966} & 0.964 & 0.935 & 0.948 \\ \hline \hline
+			engl. Stoppwörter  & 0.947 & 0.931 & 0.962 & 0.961 & 0.934 & 0.946 \\ \hline
+			keine Filterung  & \textbf{0.953} & \textbf{0.937} & \textbf{0.968} & \textbf{0.967} & \textbf{0.940} & \textbf{0.952} \\ \hline \hline
+			1-Gramme  & \textbf{0.955} & \textbf{0.941} & \textbf{0.969} & \textbf{0.967} & \textbf{0.967} & \textbf{0.954} \\ \hline 
+			1+2-Gramme  & 0.945 & 0.928 & 0.962 & 0.961 & 0.961 & 0.944 \\ \hline \hline
+			$k = 5$  & \textbf{0.953} & \textbf{0.938} & \textbf{0.967} & \textbf{0.966} & \textbf{0.940} & \textbf{0.952} \\ \hline 
+			$k = 15$  & 0.950  & 0.934  & 0.965  & 0.964 & 0.936  & 0.949 \\ \hline 
+			$k = 25$  & 0.948  & 0.931  & 0.964  & 0.962 & 0.934  & 0.947  \\ \hline \hline
+			euklid. Metr.  & 0.950 & \textbf{0.935} & 0.965 & 0.963 & 0.937 & 0.949 \\ \hline
+			Manhattan  & 0.950 & 0.934 & \textbf{0.966} &\textbf{0.964} & 0.937 & 0.949 \\ \hline
+			 \hline
+			Maximum  & 0.960 & 0.948 & 0.973 & 0.972 & 0.950 & 0.959 \\ \hline
+			durchschnittl. & 0.950 & 0.934 & 0.965 & 0.964 & 0.937 & 0.949 \\ \hline
+		\end{tabular}
+		\caption{Ergebnisse bei KNN}\label{results-knn}
+	\end{center}
+\end{table}\\\\
+Insgesamt sind beim KNN-Algorithmus ausgezeichnete Zahlen zu beobachten. Im Maximum liegen  nahezu alle Kennzahlen über 95\%, positiv auffallend sind hier Werte der Segreganz und der Sensitivität von über 97\%. Durchschnittlich werden immer Punktzahlen von über 93\% erreicht. Ein Unterschied im Abschneiden unterschiedlicher Parametereinstellungen ist bei der Merkmalsgewichtung zu erkennen: TF erreicht hier ein wenig bessere Punktzahlen als TF-IDF. Die Filterung von englischen Stoppwörtern bringt im Mittel keine Verbesserung hervor. Extrahiert man nur 1-Gramme, anstatt 1-Gramme und 2-Gramme, erreicht man bis zu 1\% höhere Punktzahlen.\\
+Bei den verfahrensspezifischen Hyperparametern gibt es nur wenige Schwankungen. Beim k-Wert deutet sich an, dass ein einstelliger Wert besser abschneidet als ein zweistelliger, die Verbesserungen belaufen sich aber nur auf höchstens 0,5\%. Bei den Metriken ist auffällig, dass unterschiedliche Arten der Abstandsmessungen nahezu keinen Unterschied in der Qualität hervorbringen, die Abweichungen betragen hier höchstens 0,1\%.\\
+Angesichts seiner durchweg hohen Punktzahlen in allen möglichen Gütemaßen ist der k-Nearest-Neighbor-Algorithmus sehr gut für die Erkennung von IRA-ähnlichen Trollen geeignet.
+\subsubsection{Naiver Bayes-Klassifikator}
+Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators ist die angenommene Verteilung der Merkmalvektoren. Getestet wurde mit einer Normalverteilung, einer Multinomialverteilung und einer komplementären Verteilung nach >Rennie et al. (2003)<.\\
+Die Ergebnisse in Tabelle \ref{results-nb} lassen folgende Schlüsse zu:\\
+Dieses Verfahren schneidet je nach Parameter-Einstellung sehr unterschiedlich ab. So liefert die Annahme einer Normalverteilung oder einer komplementären Verteilung Punktzahlen von 75 - 85\%.
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline 
+			Hyperparameter & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
+			TF         & \textbf{0.747} & 0.772 & \textbf{0.767} & \textbf{0.685} & 0.804 & \textbf{0.694} \\ \hline
+			TF-IDF     & 0.702 & \textbf{0.798} & 0.736 & 0.571 & \textbf{0.824} & 0.536 \\ \hline \hline
+			engl. Stoppwörter  & 0.715 & 0.751 & 0.731 & 0.620 & 0.803 & \textbf{0.616} \\ \hline
+			keine Filterung    & \textbf{0.734} & \textbf{0.819} & \textbf{0.77}1 & \textbf{0.636} & \textbf{0.825} & 0.614 \\ \hline \hline
+			1-Gramme    & 0.735 & 0.811 & 0.761 & 0.642 & 0.642 & 0.631 \\ \hline 
+			1+2-Gramme  & 0.713 & 0.758 & 0.741 & 0.613 & 0.613 & 0.599 \\ \hline \hline
+			Normal      & 0.807 & 0.762 & 0.868 & 0.878 & 0.741 & 0.815 \\ \hline 
+			Multinomial & 0.585 & 0.841 & 0.568 & 0.198 & 0.947 & 0.253 \\ \hline 
+			Komplementär& 0.781 & 0.752 & 0.818 & 0.808 & 0.755 & 0.777  \\ \hline 
+			\hline
+			Maximum        & 0.834 & 1.000 & 0.949 & 0.958 & 1.000 & 0.855 \\ \hline
+			durchschnittl. & 0.724 & 0.785 & 0.751 & 0.628 & 0.814 & 0.615 \\ \hline
+		\end{tabular}
+		\caption{Ergebnisse bei NB}\label{results-nb}
+	\end{center}
+\end{table}\\
+Bei einer Multinomialverteilung sind die Ergebnisse im Durchschnitt deutlich schlechter. Beispielsweise ist die mittlere Treffergenauigkeit 58,5\% und die mittlere Sensitivität bei nur 19,8\%. Es gibt hierbei sehr starke, gleichzeitige Ausreißer nach oben und unten: In Kombination mit TF-IDF wird eine Spezifität von 100\% bei einer Sensitivität von 0\% erreicht, weshalb die Treffergenauigkeit hier etwa 50\% beträgt.\\
+Bei der Merkmalgewichtung schneiden TF und TF-IDF in einer Hälfte der Gütemaße besser ab. Das Unterlassung einer Filterung von englischen Stoppwörtern führt auch bei diesem Verfahren zu leicht besseren Ergebnissen von 2 - 6\%.\\
+Lässt man die Annahme einer Multinomialverteilung außen vor, so werden mit dieser Methode Punktzahlen von durchschnittlich 75\% - 85\% erreicht, was gerade mit Einstellung der richtigen Hyperparameter zu relativ verlässlichen Ergebnissen führt. Unter diesen Voraussetzungen ist das Verfahren zur Trollerkennung durchaus geeignet.
+\subsubsection{Support Vector Machine}
 Lorem ipsum dolor sit amet.
-\pagebreak Lorem ipsum dolor sit amet.\\
-\pagebreak Lorem ipsum dolor sit amet.\\
-\pagebreak Lorem ipsum dolor sit amet.\\
-\pagebreak Lorem ipsum dolor sit amet.\\
-\pagebreak Lorem ipsum dolor sit amet.\\
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline 
+			Hyperparameter & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
+			TF         & 0.875 & 0.813 & 0.959 & 0.964 & 0.793 & 0.882 \\ \hline
+			TF-IDF     & 0.868 & 0.838 & 0.900 & 0.900 & 0.837 & 0.868 \\ \hline \hline
+			engl. Stoppwörter  & 0.865 & 0.816 & 0.929 & 0.931 & 0.804 & 0.869 \\ \hline
+			keine Filterung    & 0.878 & 0.834 & 0.930 & 0.933 & 0.826 & 0.880 \\ \hline \hline
+			1-Gramme   & 0.870 & 0.820 & 0.932 & 0.935 & 0.935 & 0.874 \\ \hline
+			1+2-Gramme  & 0.873 & 0.830 & 0.928 & 0.929 & 0.929 & 0.876 \\ \hline \hline
+			$C=1.00$ & 0.872 & 0.826 & 0.930 & 0.932 & 0.815 & 0.875 \\ \hline 
+			$C=0.75$ & 0.871 & 0.825 & 0.929 & 0.932 & 0.815 & 0.875 \\ \hline 
+			$C=0.50$ & 0.871 & 0.825 & 0.930 & 0.932 & 0.814 & 0.875 \\ \hline
+			\hline
+			Maximum        & 0.892 & 0.867 & 0.970 & 0.974 & 0869 & 0.892 \\ \hline
+			durchschnittl. & 0.871 & 0.825 & 0.930 & 0.932 & 0.815 & 0.875 \\ \hline
+		\end{tabular}
+		\caption{Ergebnisse bei SVM}\label{results-svm}
+	\end{center}
+\end{table}\\
+\pagebreak 
 \subsection{Verfahren im Vergleich}
