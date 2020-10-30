@@ -1,7 +1,7 @@
-score,0.9151451555250407
+score,0.9600260476573035
 clf,KNeighborsClassifier()
 clf__metric,manhattan
-clf__n_neighbors,13
+clf__n_neighbors,5
 tfidf__use_idf,False
 vect__ngram_range,"(1, 1)"
 vect__stop_words,english

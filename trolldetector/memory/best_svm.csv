@@ -1,7 +1,7 @@
-score,0.8274590439518825
+score,0.8924454715652306
 clf,LinearSVC()
-clf__C,0.5
+clf__C,1.0
 clf__random_state,42
-tfidf__use_idf,False
+tfidf__use_idf,True
 vect__ngram_range,"(1, 2)"
 vect__stop_words,None

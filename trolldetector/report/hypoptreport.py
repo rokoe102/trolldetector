@@ -99,6 +99,23 @@ class HypOptReport:
             rank += 1
 
         print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
+        print("|                    NPV ranking                     |")
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        rank = 1
+
+        # print top 5 NPV scores, std.deviation and params
+        zipped = sorted(zip(self.npv["score"], self.npv["std"], self.combinations), key=lambda t: t[0],
+                        reverse=True)
+        for mean, std, params in zipped:
+            if rank == 6:
+                break
+            print("[" + str(rank) + "]", end=" ")
+            print("%0.3f (+/-%0.03f) for %r"
+                  % (mean, std * 2, params))
+            rank += 1
+
+        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
         print("|                   recall ranking                   |")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
@@ -106,6 +123,23 @@ class HypOptReport:
 
         # print top 5 recall scores, std.deviation and params
         zipped = sorted(zip(self.recall["score"], self.recall["std"], self.combinations), key=lambda t: t[0],
+                        reverse=True)
+        for mean, std, params in zipped:
+            if rank == 6:
+                break
+            print("[" + str(rank) + "]", end=" ")
+            print("%0.3f (+/-%0.03f) for %r"
+                  % (mean, std * 2, params))
+            rank += 1
+
+        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
+        print("|                specifity ranking                   |")
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        rank = 1
+
+        # print top 5 specifity scores, std.deviation and params
+        zipped = sorted(zip(self.specifity["score"], self.specifity["std"], self.combinations), key=lambda t: t[0],
                         reverse=True)
         for mean, std, params in zipped:
             if rank == 6:
@@ -138,6 +172,25 @@ class HypOptReport:
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|            hyperparameters in detail               |")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        avg_score = {"accuracy": np.mean(self.accuracy["score"]),
+                     "precision": np.mean(self.precision["score"]),
+                     "npv": np.mean(self.npv["score"]),
+                     "recall": np.mean(self.recall["score"]),
+                     "specifity": np.mean(self.specifity["score"]),
+                     "f1": np.mean(self.f_one["score"])
+
+                    }
+
+
+        print("average scores")
+        print("\taccuracy\tprecision\tNPV   \t\trecall\t\tspecifity\tf1")
+        print("\t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f   \t%0.3f    \t%0.3f" % (
+        avg_score["accuracy"], avg_score["precision"], avg_score["npv"], avg_score["recall"], avg_score["specifity"],
+        avg_score["f1"]))
+
+
+        print("              +-------------------+                   ")
         print("              | feature weighting |                   ")
         print("              +-------------------+                   ")
 

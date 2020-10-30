@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import GridSearchCV
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier, DistanceMetric as dm
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn.decomposition import TruncatedSVD
@@ -8,6 +8,7 @@ from sklearn.pipeline import Pipeline
 from parsing import prepare
 from report.hypoptreport import HypOptReport
 from memory import memory
+import numpy as np
 
 
 # use the KNN method with custom hyperparameters
@@ -67,6 +68,13 @@ def trainAndTest(k, metr,  test, cargs):
     print("|                      REPORT                        |")
     print("+----------------------------------------------------+")
 
+    tn, fp, fn, tp = metrics.confusion_matrix(y_test, predicted).ravel()
+    print("true negatives: " + str(tn))
+    print("false negatives: " + str(fn))
+    print("true positives: " + str(tp))
+    print("false positives: " + str(fp))
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
     print(metrics.classification_report(y_test, predicted))
 
 
@@ -90,17 +98,19 @@ def optimize(test, verbose):
     pipe = Pipeline(steps=[
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
-        ("reductor", TruncatedSVD()),
+        ("reductor", TruncatedSVD(n_components=10)),
         ("clf", KNeighborsClassifier())
     ])
+
 
     parameter_space = {"clf": [KNeighborsClassifier()],
                        "vect__ngram_range": [(1,1),(1,2)],
                        "vect__stop_words": [None, "english"],
                        "tfidf__use_idf": (True,False),
-                       "clf__n_neighbors": [5, 13],
-                       "clf__metric": ["euclidean", "manhattan", "chebyshev"],
-    }
+                       "clf__n_neighbors": [5, 15, 25],
+                       "clf__metric": ["euclidean", "manhattan"]
+                       }
+
 
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll",zero_division=True),
                "npv_score": metrics.make_scorer(metrics.precision_score, pos_label="nontroll",zero_division=True),
@@ -112,7 +122,7 @@ def optimize(test, verbose):
 
     # execute a grid search: testing every combination of hyperparameters
 
-    clf = GridSearchCV(pipe, parameter_space,n_jobs=6,cv=2,scoring=scorers,refit=False,verbose=3)
+    clf = GridSearchCV(pipe, parameter_space,n_jobs=5,cv=2,scoring=scorers,refit=False,verbose=3)
     clf.fit(X_train, y_train)
 
     memory.save(clf.cv_results_, "KNN")

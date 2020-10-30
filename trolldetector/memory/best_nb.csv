@@ -1,6 +1,6 @@
-score,0.8094716501686373
-clf,GaussianNB()
-scaling,None
+score,0.8428505197144667
+clf,ComplementNB()
+scaling,MinMaxScaler()
 tfidf__use_idf,False
-vect__ngram_range,"(1, 2)"
-vect__stop_words,english
+vect__ngram_range,"(1, 1)"
+vect__stop_words,None

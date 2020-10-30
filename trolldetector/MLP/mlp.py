@@ -61,6 +61,13 @@ def trainAndTest(actFunc,test, cargs):
     print("|                      REPORT                        |")
     print("+----------------------------------------------------+")
 
+    tn, fp, fn, tp = metrics.confusion_matrix(y_test, predicted).ravel()
+    print("true negatives: " + str(tn))
+    print("false negatives: " + str(fn))
+    print("true positives: " + str(tp))
+    print("false positives: " + str(fp))
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
     print(metrics.classification_report(y_test, predicted))
 
 def optimize(test, verbose):
@@ -80,7 +87,7 @@ def optimize(test, verbose):
     pipe = Pipeline(steps=[
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
-        ("reductor", TruncatedSVD()),
+        ("reductor", TruncatedSVD(n_components=10)),
         ("clf", MLPClassifier(max_iter=50, tol=0.005, early_stopping=True))
     ])
 

@@ -11,12 +11,12 @@ from memory import memory
 
 def trainAndTest(test,cost,cargs):
 
-    print("--------------------------------------------------------")
+    print("+------------------------------------------------------+")
     print("classification technique: support-vector machine")
     print("selected cost for misclassification penalization: " + str(cost))
     cargs.print()
     print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("--------------------------------------------------------")
+    print("+------------------------------------------------------+")
     if cargs.verbose:
         print("loading datasets")
 
@@ -63,6 +63,13 @@ def trainAndTest(test,cost,cargs):
     print("|                      REPORT                        |")
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
+    tn, fp, fn, tp = metrics.confusion_matrix(y_test, predicted).ravel()
+    print("true negatives: " + str(tn))
+    print("false negatives: " + str(fn))
+    print("true positives: " + str(tp))
+    print("false positives: " + str(fp))
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
     print(metrics.classification_report(y_test, predicted))
 
 def optimize(test, verbose):
@@ -82,7 +89,7 @@ def optimize(test, verbose):
     pipe = Pipeline(steps=[
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
-        ("reductor", TruncatedSVD()),
+        ("reductor", TruncatedSVD(n_components=10)),
         ("clf", LinearSVC())
     ])
 
@@ -102,7 +109,7 @@ def optimize(test, verbose):
                "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
                }
 
-    clf = GridSearchCV(pipe, parameter_space, n_jobs=4, cv=2,scoring=scorers,refit=False, verbose=2)
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
 
     memory.save(clf.cv_results_, "SVM")
