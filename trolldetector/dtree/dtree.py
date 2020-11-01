@@ -109,7 +109,7 @@ def optimize(test, verbose):
                "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
                }
 
-    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2,scoring=scorers,refit=False, verbose=2)
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=6, cv=2,scoring=scorers,refit=False, verbose=2)
     clf.fit(X_train, y_train)
 
     memory.save(clf.cv_results_, "tree")

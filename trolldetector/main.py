@@ -55,6 +55,8 @@ if __name__ == "__main__":
     # parser for MLP command
     mlp_parser = subparsers.add_parser("MLP", add_help=False, help="multi-layer perceptron classification")
     mlp_parser.add_argument("-a", dest="actMLP", type=str, default="relu", choices=["relu","tanh","identity","logistic"], help="changes the activation function")
+    mlp_parser.add_argument("--iter", dest="iter", type=int, metavar="<n>", default=5, help="stops training after n iterations with no improvement >= tol")
+    mlp_parser.add_argument("--tol", dest="tol", type=float, default=0.0025, help="determines tolerance for stopping condition")
     mlp_parser.add_argument("--test", dest="tpercMLP", metavar="<perc>", type=float, default=0.1, help="changes the proportion of test data")
     mlp_parser.add_argument("-h", dest="helpMLP", action="store_true", help="displays this help message")
 
@@ -105,7 +107,7 @@ if __name__ == "__main__":
         elif args.optimize == True:
             mlp.optimize(args.tpercMLP, args.verb)
         else:
-            mlp.trainAndTest(args.actMLP,args.tpercMLP, cargs)
+            mlp.trainAndTest(args.actMLP,args.iter, args.tol,args.tpercMLP, cargs)
 
     elif method == "all":
         all.compare(args.verb)

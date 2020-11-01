@@ -9,13 +9,13 @@ from parsing import prepare
 from report.hypoptreport import HypOptReport
 from memory import memory
 
-def trainAndTest(actFunc,test, cargs):
+def trainAndTest(actFunc,iter, tol,test, cargs):
 
-    print("---------------------------------------------------------------")
+    print("+-------------------------------------------------------------+")
     print("classification technique: multi-layer perceptron classification")
     cargs.print()
     print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("---------------------------------------------------------------")
+    print("+-------------------------------------------------------------+")
     if cargs.verbose:
         print("loading datasets")
 
@@ -44,7 +44,7 @@ def trainAndTest(actFunc,test, cargs):
         print("splitting data")
     X_train, X_test, y_train, y_test = train_test_split(X_reduced, prepare.getTarget(), test_size=test, random_state=42, shuffle=True)
 
-    mlp = MLPClassifier(random_state=1,activation=actFunc,max_iter=50,verbose=cargs.verbose,early_stopping=True,tol=0.001,n_iter_no_change=5)
+    mlp = MLPClassifier(random_state=42,activation=actFunc,max_iter=50,verbose=cargs.verbose,early_stopping=True,tol=tol,n_iter_no_change=iter)
 
     # training
     if cargs.verbose:
@@ -88,7 +88,7 @@ def optimize(test, verbose):
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
         ("reductor", TruncatedSVD(n_components=10)),
-        ("clf", MLPClassifier(max_iter=50, tol=0.005, early_stopping=True))
+        ("clf", MLPClassifier())
     ])
 
     parameter_space = {"vect__ngram_range": [(1, 1), (1, 2)],
@@ -97,7 +97,7 @@ def optimize(test, verbose):
                        "clf__activation": ["relu","tanh","logistic"],
                        "clf__n_iter_no_change": [5],
                        "clf__max_iter": [50],
-                       "clf__tol": [0.005],
+                       "clf__tol": [0.001],
                        "clf__early_stopping": [True],
                        "clf": [MLPClassifier()],
                        "clf__random_state": [42]

@@ -1,6 +1,6 @@
-score,0.8978213399679359
+score,0.9503537314330812
 clf,DecisionTreeClassifier()
-clf__criterion,gini
+clf__criterion,entropy
 clf__random_state,42
 tfidf__use_idf,False
 vect__ngram_range,"(1, 1)"

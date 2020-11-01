@@ -80,18 +80,21 @@ Bei einer Multinomialverteilung sind die Ergebnisse im Durchschnitt deutlich sch
 Bei der Merkmalgewichtung schneiden TF und TF-IDF in einer Hälfte der Gütemaße besser ab. Das Unterlassung einer Filterung von englischen Stoppwörtern führt auch bei diesem Verfahren zu leicht besseren Ergebnissen von 2 - 6\%.\\
 Lässt man die Annahme einer Multinomialverteilung außen vor, so werden mit dieser Methode Punktzahlen von durchschnittlich 75\% - 85\% erreicht, was gerade mit Einstellung der richtigen Hyperparameter zu relativ verlässlichen Ergebnissen führt. Unter diesen Voraussetzungen ist das Verfahren zur Trollerkennung durchaus geeignet.
 \subsubsection{Support Vector Machine}
-Lorem ipsum dolor sit amet.
+Die Klassifikation mit einer Support Vector Machine hat wie in Kapitel \ref{svm} beschrieben den Bestrafungsparameter C als einzigen verfahrensspezifischen Hyperparameter. Bei Ausführung der Optimierung kommen folgende Ergebnisse (Tabelle \ref{results-svm}) zustande:\\
+Insgesamt liefert die SVM im Mittel Punktzahlen von mindestens 80\% in allen betrachteten Gütemaßen. Beste Werte sind Segreganz und Sensitivität: Durchschnittlich werden hier ca. 93\% und im Maximum 97\% erreicht.\\
+Unterschiedliche Merkmalgewichtungen führen auch hier zu unterschiedlichen Ergebnissen. Sowohl TF als auch TF-IDF schneiden in drei von sechs Gütemaßen besser ab als das jeweils andere. Der stärkste Unterschied betrifft Segreganz und Sensitivität: Hier schneidet TF 6\% besser ab. Bei allen anderen Arten der Merkmalsextraktion gibt es nur wenige Schwankungen von höchstens 2\%.\\
+Beim Bestrafungsparameter C sind bis auf 0,1\% keine Schwankungen in den unterschiedlichen Ausprägungen auszumachen.\\
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
 			\hline 
 			Hyperparameter & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
-			TF         & 0.875 & 0.813 & 0.959 & 0.964 & 0.793 & 0.882 \\ \hline
-			TF-IDF     & 0.868 & 0.838 & 0.900 & 0.900 & 0.837 & 0.868 \\ \hline \hline
+			TF         & \textbf{0.875} & 0.813 & \textbf{0.959} & \textbf{0.964} & 0.793 & 0.882 \\ \hline
+			TF-IDF     & 0.868 & \textbf{0.838} & 0.900 & 0.900 & \textbf{0.837} & \textbf{0.868} \\ \hline \hline
 			engl. Stoppwörter  & 0.865 & 0.816 & 0.929 & 0.931 & 0.804 & 0.869 \\ \hline
-			keine Filterung    & 0.878 & 0.834 & 0.930 & 0.933 & 0.826 & 0.880 \\ \hline \hline
-			1-Gramme   & 0.870 & 0.820 & 0.932 & 0.935 & 0.935 & 0.874 \\ \hline
-			1+2-Gramme  & 0.873 & 0.830 & 0.928 & 0.929 & 0.929 & 0.876 \\ \hline \hline
+			keine Filterung    & \textbf{0.878} & \textbf{0.834} & \textbf{0.930} & \textbf{0.933} & \textbf{0.826} & \textbf{0.880} \\ \hline \hline
+			1-Gramme   & 0.870 & 0.820 & \textbf{0.932} & \textbf{0.935} & \textbf{0.935} & 0.874 \\ \hline
+			1+2-Gramme  & \textbf{0.873} & \textbf{0.830} & 0.928 & 0.929 & 0.929 & \textbf{0.876} \\ \hline \hline
 			$C=1.00$ & 0.872 & 0.826 & 0.930 & 0.932 & 0.815 & 0.875 \\ \hline 
 			$C=0.75$ & 0.871 & 0.825 & 0.929 & 0.932 & 0.815 & 0.875 \\ \hline 
 			$C=0.50$ & 0.871 & 0.825 & 0.930 & 0.932 & 0.814 & 0.875 \\ \hline
@@ -102,5 +105,56 @@ Lorem ipsum dolor sit amet.
 		\caption{Ergebnisse bei SVM}\label{results-svm}
 	\end{center}
 \end{table}\\
-\pagebreak 
+Insgesamt ist die SVM-Klassifikation mit den erreichten Punktzahlen ziemlich verlässlich und daher für die Trollerkennung gut geeignet. Von Vorteil ist auch, dass die durchweg hohe Segreganz für ein niedriges $f_n$ spricht, was eine konservative Klassifikation, welche für die Trollerkennung wichtig ist, gewährleistet. Eine positive Eigenschaft ist außerdem die Stabilität des Verfahrens: Selbst mit wenigen bewussten oder zufälligen Einstellungen liefert das Verfahren immer noch gute Ergebnisse, was für eine Art Benutzerfreundlichkeit spricht.
+\subsubsection{Entscheidungsbäume}
+Bei der Entscheidungsbaum-Klassifikation sind neben den von allen geteilten Hyperparametern auch das Aufteilungskriterium gegeben. Die zwei Möglichkeiten sind hier die in Kapitel \ref{tree} beschriebenen Maße Gini Impurity und Entropie. Aus Tabelle \ref{results-tree} lassen sich folgende Schlüsse ziehen:\\
+Die Klassifikation erreicht im Mittel in allen Gütekriterien sehr hohe Werte von 94\%. Die maximalen Werte liegen mit ca. 95\% nur 1\% darüber. Es lässt sich aus diesem Grund leicht erkennen, dass hier nur sehr geringe Schwankungen vorhanden sind. Dies ist auch im Vergleich unter den Hyperparametern zu erkennen: Zwischen TF und TF-IDF, der Filterung englischer Stoppwörter und keiner Filterung und der Auswahl der jeweiligen n-Gramme liegen jeweils nur 1\% Unterschied. Die Aufteilungskriterien Gini Impurity und Entropie unterscheiden sich nur um 0,2\%.\\
+Diese ausgezeichneten Punktzahlen legen nahe, dass eine zuverlässige Trollerkennung mit diesem Verfahren sehr gut zu leisten ist. Sowohl die geringen Schwankungen unter den Hyperparametern, als auch die geringen Unterschiede in den Gütekriterien sprechen für eine hohe Stabilität des Verfahrens. Dies bedeutet auch hier, dass selbst zufällige Einstellungen niemals zu schlechten Ergebnissen führen können.\\
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline 
+			Hyperparameter & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
+			TF       & 0.945 & 0.938 & 0.951 & 0.948 & 0.941 & 0.943 \\ \hline
+			TF-IDF   & 0.936 & 0.930 & 0.941 & 0.937 & 0.934 & 0.934 \\ \hline \hline
+			engl. Stoppwörter & 0.938 & 0.932 & 0.943 & 0.939 & 0.936 & 0.936 \\ \hline
+			keine Filterung    & 0.942 & 0.935 & 0.949 & 0.946 & 0.939 & 0.941 \\ \hline \hline
+			1-Gramme   & 0.944 & 0.937 & 0.951 & 0.948 & 0.948 & 0.943 \\ \hline
+			1+2-Gramme  & 0.936 & 0.931 & 0.941 & 0.937 & 0.937 & 0.934 \\ \hline \hline
+			Gini & 0.939 & 0.933 & 0.945 & 0.942 & 0.937 & 0.937 \\ \hline
+			Entropie & 0.941 & 0.935 & 0.947 & 0.944 & 0.939 & 0.939 \\ \hline
+			\hline
+			Maximum        & 0.950 & 0.944 & 0.957 & 0.954 & 0.947 & 0.949 \\ \hline
+			durchschnittl. & 0.940 & 0.934 & 0.946 & 0.943 & 0.938 & 0.938 \\ \hline
+		\end{tabular}
+		\caption{Ergebnisse der Entscheidungsbaum-Klassifikation}\label{results-tree}
+	\end{center}
+\end{table}\\
+\subsubsection{Mehrschichtiges Perzeptron}
+Der wichtigste einstellbare Hyperparameter bei der Klassifikation mit einem Mehrschichtigen Perzeptron ist die Aktivierungsfunktion. Bei der Hyperparameteroptimierung wurden die drei in Kapitel \ref{mlp} beschriebenen Aktivierungsfunktionen getestet.
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline 
+			Hyperparameter & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
+			TF       & \textbf{0.904} & 0.868 & \textbf{0.947} & \textbf{0.948} & 0.863 & \textbf{0.906} \\ \hline
+			TF-IDF   & 0.888 & 0.868 & 0.909 & 0.907 & \textbf{0.870} & 0.887 \\ \hline \hline
+			engl. Stoppwörter & 0.891 & 0.862 & 0.925 & 0.924 & 0.860 & 0.892 \\ \hline 
+			keine Filterung   & \textbf{0.901} & \textbf{0.873} & \textbf{0.931} & \textbf{0.931} & \textbf{0.873} & \textbf{0.901} \\ \hline\hline
+			1-Gramme   & \textbf{0.898} & 0.868 & \textbf{0.932} & \textbf{0.932} & \textbf{0.932} & \textbf{0.898} \\ \hline
+			1+2-Gramme  & 0.894 & 0.868 & 0.925 & 0.923 & 0.923 & 0.894 \\ \hline \hline
+			relu & \textbf{0.931} & \textbf{0.917} & \textbf{0.945} & \textbf{0.942} & \textbf{0.920} & \textbf{0.929} \\ \hline
+			tanh & 0.887 & 0.858 & 0.918 & 0.918 & 0.858 & 0.887 \\ \hline
+			logistic & 0.871 & 0.829 & 0.922 & 0.923 & 0.822 & 0.873 \\ \hline
+			\hline
+			Maximum        & 0.937 & 0.928 & 0.968 & 0.972 & 0.933 & 0.936 \\ \hline
+			durchschnittl. & 0.896 & 0.868 & 0.928 & 0.928 & 0.866 & 0.896 \\ \hline
+		\end{tabular}
+		\caption{Ergebnisse der MLP-Klassifikation}\label{results-mlp}
+	\end{center}
+\end{table}\\
+Tabelle \ref{results-mlp} sind nun folgende Aussagen zu entnehmen: Im Durchschnitt liefert die MLP-Klassifikation Werte von mindestens 86\%. Maximal werden Punktzahlen von 93 - 97\% erreicht. Letztere Werte sind überwiegend auf die Aktivierungsfunktion ReLu zurückzuführen, welche in allen Gütemaßen 3 - 6\% besser abschneidet als die anderen beiden.\\
+Auch bei den Parametern der Merkmalsextraktion sind diesmal deutlichere Unterschiede festzustellen. Die Merkmalgewichtung mit TF liefert, analog zu allen anderen Klassifikationsverfahren, in den meisten Gütemaßen deutlich bessere Ergebnisse als TF-IDF. Filtert man englische Stoppwörter aus den Tweets, führt dies zu 1\% schlechteren Ergebnissen, als wenn man dies unterlassen würde. Die ausschließliche Extraktion von 1-Grammen ist leicht besser als die Extraktion von 1- und 2-Grammen.\\
+Die MLP-Klassifikation ist durch ihre hohen Punktzahlen in all ihren Varianten grundsätzlich für die Trollerkennung geeignet. In besonderem Maße gilt dies, wenn ReLu als Aktivierungsfunktion eingesetzt wird. Mit gut eingestellten Hyperparametern ist dieses Verfahren äußerst verlässlich. Interessant ist in diesem Zusammenhang folgendes: Die Trainingsphase mit Backpropagation wird bei einem Mehrschichtigen Perzeptron dann beendet, wenn sich der Klassifikationsscore $n$ Iterationen in Folge nicht um einen Toleranzwert $tol$ ändert. Um eine akzeptable Laufzeit zu gewährleisten, wurden die Werte bei der Hyperparameteroptimierung auf $n = 5$ und $tol = 0,25\%$ gesetzt. Dies bedeutet, dass sich bei Inkaufnahme einer langen Laufzeit die Punktzahlen in dem ein oder anderen Gütemaß um wenige Prozentpunkte verändern können.
+\pagebreak
 \subsection{Verfahren im Vergleich}

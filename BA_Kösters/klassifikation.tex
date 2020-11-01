@@ -24,7 +24,7 @@ Der Klassifikator bestimmt nun diejenige Klasse $k_i$, für die der Wert dieser 
 Die Werte für $P(k_i)$ und $P(t)$ werden a priori über relative Anteilshäufigkeiten, also über den Anteil einer Klasse und den Anteil eines Textes am gesamten Merkmalraum, bestimmt. Für die Maximierung wird meist die Maximum-Likelihood-Methode benutzt.\\
 Jeder Klasse wird vor der Klassifizierung eine bestimmte Form der Wahrscheinlichkeitsverteilung, meist eine Normalverteilung, und die stochastische Unabhängigkeit der Merkmale unterstellt. Letztere Annahme ist \glqq naiv\grqq{}  weil nicht immer zutreffend, der Algorithmus liefert in der Praxis bei vielen Anwendungen dennoch solide Ergebnisse. Wird diese Annahme hingegen durch stark korrelierte Daten gröber verletzt, so sind Genauigkeitsverluste zu erwarten, was eine Schwäche dieses Verfahrens ist. Im Rahmen der Evaluation werden Ergebnisse unter Annahme einer Normalverteilung und einer Multinomialverteilung verglichen.
 \pagebreak
-\subsection{Support Vector Machine}
+\subsection{Support Vector Machine}\label{svm}
 Ein anderes Lernmodell trägt den Namen Support Vector Machine (SVM) \citep{Nayak15}. Die Grundidee ist hier, die vorliegenden Klassen im multidimensionalen Raum durch Einschub einer Hyperebene räumlich zu trennen. Die Ebene wird dabei so platziert, dass der Abstand zu den nächstliegenden Vektoren der beiden Klassen, den sogenannten Stützvektoren (engl. \textit{support vectors}) maximal ist. Abbildung \ref{svm-alg} zeigt beispielhaft zwei solcher durch eine Hyperebene (rote Gerade) getrennte Klassen in einem zweidimensionalen Merkmalraum. 
 \begin{figure}[htb]
 	\begin{center}
@@ -34,7 +34,7 @@ Ein anderes Lernmodell trägt den Namen Support Vector Machine (SVM) \citep{Naya
 \end{figure}\\
  Für ein zu klassifizierendes Objekt wird nun mithilfe einer Entscheidungsfunktion festgestellt, auf welcher Seite der Ebene es liegt und kann so eindeutig einer Klasse zugeordnet werden. Ist der Einschub einer Hyperebene nicht möglich, d.h. sind die Klassen nicht linear trennbar, so behilft man sich mit dem sogenannten \glqq Kernel-Trick\grqq{}: Der Merkmalraum wird auf einen höherdimensionalen Raum abgebildet, in welchem die Klassen dann linear trennbar sind. Diese Transformation benötigt eine hohe Rechenleistung und stellt deshalb bei stark überlappenden Klassen eine Schwäche dieses Verfahrens dar. Bei weniger überlappenden oder linear trennbaren Klassen ist der Algorithmus in der Einstufung jedoch sehr schnell. Ein weiterer Vorteil ist der relativ geringe Speicherverbrauch, da zur Klassifikation nur ein Teil der Trainingsdaten gebraucht wird.\\
  Zwei Parameter, die die Ergebnisse beeinflussen können, sind zum einen der Bestrafungsparameter $C$ und der Gamma-Wert. $C$ gibt an, wie stark die Gefahr der Falschklassifizierung berücksichtigt werden soll. Je niedriger der Wert, desto leichter wird es, eine Trennung zu vollziehen und dabei einzelne Ausreißer zu ignorieren. Allerdings findet dann bei mäßiger bis starker Überlappung keine eindeutige Trennung der Klassen statt. Je höher der Wert, desto strenger versucht der Algorithmus, alle Punkte in der Entscheidung miteinzubeziehen. Hier besteht die Gefahr der Überanpassung. Der Gamma-Wert gibt an, wie stark einzelne Punkte beim Kernel-Trick Einfluss auf die Gruppierung haben, also wie granular die Gruppen sind. Bei linear trennbaren Klassen kommt er demnach nicht zur Anwendung. Um zu guten Ergebnissen zu kommen, ist eine gute Balance der beiden Werte, in jedem Fall aber die Anpassung an den Datensatz von Nöten.
-\subsection{Entscheidungsbäume}
+\subsection{Entscheidungsbäume}\label{tree}
 Die Grundlage für ein weiteres Klassifikationsverfahren sind die sogenannten Entscheidungsbäume (engl. \textit{decision trees}) (\textcolor{red}{Quelle}). Hierbei handelt es sich um herkömmliche, aus der Graphentheorie bekannte Bäume, welche eine Entscheidungsfolge abbilden. Für jedes zu klassifizierende Objekt wird der Baum einmal durchlaufen. An jedem inneren Knoten wird nun der Wert eines extrahierten Merkmals abgefragt. Je nach Ergebnis des Vergleichs wird entschieden, welches Kind als nächstes besucht wird. Die Blätter beinhalten die möglichen Klassen, sodass nach der letzten Entscheidung mit Ankommen am Ende des Baumes die Klassifikation vollzogen ist. Abbildung \ref{dtree} zeigt beispielhaft einen Entscheidungsbaum für die Klassifikation eines Messestandorts anhand von drei Merkmalen. Die möglichen Klassen für einen Standort sind \glqq geeignet\grqq{} und \glqq ungeeignet\grqq{}.
 \begin{figure}[htb]
 	\begin{center}
@@ -45,7 +45,7 @@ Die Grundlage für ein weiteres Klassifikationsverfahren sind die sogenannten En
 Das Training bzw. das Lernen besteht bei diesem Verfahren im Aufbau des Baumes. Beginnend bei der Wurzel wird nun dasjenige Merkmal bestimmt, welches den größten Fortschritt in der Klassifikationsentscheidung bringt. Ein gebräuchliches Maß dafür ist die \textit{Gini Impurity}, welche die Homogenität bzw. Heterogenität der Daten anzeigt. Gleichsam anwendbar ist hier auch die Entropie, welche den mittleren Informationsgehalt des Merkmalvektors misst. Das gefundene Merkmal dient nun zur Aufteilung der ursprünglichen Datenmenge. Auf die neu entstehenden Mengen wird diese Methode nun rekursiv angewendet bis Mengen erzeugt werden, deren Elemente alle der gleichen Klasse angehören.\\
 Durch die klare Strukturierung und grafische Darstellbarkeit ist die Entscheidungsbaum-Klassifikation als Konzept leicht verständlich. Ein weiterer Vorteil ist eine automatische Merkmalfilterung beim Aufbau des Baums: Merkmale, die durch Gini Impurity bzw. Entropie als irrelevant erkannt wurden, können leicht weggelassen werden. Hier sind Zeit- und Speichergewinne möglich.\\
 Eine Schwäche dieses Verfahrens ist die schwache Robustheit der Entscheidungsbäume. Dies bedeutet, dass kleine Änderungen im Ausgangsdatensatz zu sehr großen Veränderungen in der Datenstruktur und der anschließenden Klassifikation führen können.
-\subsection{Mehrschichtiges Perzeptron}
+\subsection{Mehrschichtiges Perzeptron}\label{mlp}
 Das mehrschichtige Perzeptron (engl. \textit{multi-layer perceptron, MLP}) ist ein Vertreter der künstlichen neuronalen Netze (\textcolor{red}{Quelle}). In seinem grundlegenden Aufbau ähnelt es einem Logikgatter. Die grundlegenden Bausteine, analog zu Gehirnzellen Neuronen genannt, sind in Schichten angeordnet. Die Eingabeschicht nimmt den Merkmalvektor komponentenweise entgegen, während die Neuronen der Ausgabeschicht das Klassifikationsergebnis ausgeben. Die dazwischenliegenden Schichten werden versteckte Schichten bzw. \textit{hidden layers} genannt. Abbildung \ref{mlp-ex} illustiert ein Beispiel für Netz, welches einen vierdimensionalen Vektor verarbeitet.\\
  \begin{figure}[htb]
 	\begin{center}
@@ -54,5 +54,17 @@ Das mehrschichtige Perzeptron (engl. \textit{multi-layer perceptron, MLP}) ist e
 	\end{center}
 \end{figure}\\
 Jedes Neuron einer Schicht hat eine Verbindung, ähnlich einer Kante, zu einem Neuron (oft auch zu allen) der nächsten Schicht. Die Verbindung trägt ein Gewicht. Dazu trägt auch jedes Neuron einer versteckten Schicht und der Output-Schicht ein sogenanntes Verzerrungsgewicht bzw. \textit{bias weight} $b$.\\
- Der Lernprozess läuft nun wie folgt ab: Beginnend bei den Input-Neuronen wird für jede Eingabe eine gegebene Aktivierungsfunktion berechnet. Das Ergebnis wird an die nachfolgenden Neuronen weitergeschickt und erneut die Aktivierungsfunktion berechnet. Ist es schließlich in der Output-Schicht angekommen, so wird das Ergebnis interpretiert und mit der vorher deklarierten Klasse verglichen. Ist das Ergebnis falsch, so werden die Gewichte des Netzes von hinten nach vorne neujustiert. Man spricht hier von \textit{Backpropagation}. Auf diese Weise lernt das Netz mit jedem Fehler dazu und die Klassifikation wird zunehmend genauer.	
+ Der Lernprozess läuft nun wie folgt ab: Beginnend bei den Input-Neuronen wird für jede Eingabe eine gegebene Aktivierungsfunktion berechnet. Das Ergebnis wird an die nachfolgenden Neuronen weitergeschickt und erneut die Aktivierungsfunktion berechnet. Ist es schließlich in der Output-Schicht angekommen, so wird das Ergebnis interpretiert und mit der vorher deklarierten Klasse verglichen. Ist das Ergebnis falsch, so werden die Gewichte des Netzes von hinten nach vorne neujustiert. Man spricht hier von \textit{Backpropagation}. Auf diese Weise lernt das Netz mit jedem Fehler dazu und die Klassifikation wird zunehmend genauer.\\
+ Als Aktivierungsfunktion werden klassischerweise drei verschiedene Funktionen herangezogen. Die erste Funktion ist der \textit{Tangens hyperbolicus} (kurz tanh).
+ \begin{equation}
+ 	tanh(x) = \frac{sinh(x)}{cosh(x)} = \frac{e^x - e^{-x}}{e^x + e^{-x}}
+ \end{equation}
+ Oft verwendet wird auch die folgende logistische Funktion
+ \begin{equation}
+ 	f(x) = \frac{1}{1 + e^{-x}}
+ \end{equation}
+ Eine neuere Form der Aktivierungsfunktion ist die \textit{rectified linear unit} (kurz: ReLu). Sie ist folgendermaßen definiert:
+ \begin{equation}
+ 	f(x) = \max(0, x)
+ \end{equation}
 \pagebreak

@@ -28,7 +28,7 @@ def compare(verbose):
     pipe = Pipeline(steps=[
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
-        ("reductor", TruncatedSVD()),
+        ("reductor", TruncatedSVD(n_components=10)),
         ("scaling", None),
         ("clf", KNeighborsClassifier())
     ])
