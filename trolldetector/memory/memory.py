@@ -1,6 +1,6 @@
 import pandas as pd
 import sklearn.neighbors
-from sklearn import naive_bayes, neighbors, svm, tree, neural_network
+from sklearn import naive_bayes, neighbors, svm, tree, neural_network, preprocessing
 
 # get a dict of hyperparameters from save file
 def load(technique):
@@ -16,6 +16,10 @@ def load(technique):
          dict = convert(dict)
          clf = getattr(naive_bayes, dict["clf"][0].replace("(", "").replace(")", ""))
          dict["clf"] = [clf()]
+         if dict["scaling"][0] == "MinMaxScaler()":
+            sca = getattr(preprocessing, dict["scaling"][0].replace("(", "").replace(")", ""))
+            dict["scaling"] = [sca()]
+
 
      elif technique == "SVM":
          dict = pd.read_csv("memory/best_svm.csv",index_col=0, header=None).T.to_dict("list")
@@ -26,7 +30,6 @@ def load(technique):
      elif technique == "tree":
          dict = pd.read_csv("memory/best_tree.csv",index_col=0, header=None).T.to_dict("list")
          dict = convert(dict)
-         print(dict)
          clf = getattr(tree, dict["clf"][0].replace("(", "").replace(")", ""))
          dict["clf"] = [clf()]
 

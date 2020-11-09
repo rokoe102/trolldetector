@@ -43,6 +43,11 @@ class HypOptReport:
         self.combinations = results["params"]
 
 
+        self.train_time = results["mean_fit_time"].tolist()
+
+        self.test_time = results["mean_score_time"].tolist()
+
+
     def print(self):
         self.print_common()
         if self.technique == "KNN":
@@ -57,6 +62,8 @@ class HypOptReport:
             self.print_mlp()
         else:
             print("Error: no valid classification technique: " + self.technique)
+
+        self.print_runtime()
 
 
     # print rankings for all combinations and mean scores for the
@@ -383,3 +390,7 @@ class HypOptReport:
 
             print("%-8s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
                 activation, act_score["accuracy"], act_score["precision"], act_score["npv"], act_score["recall"], act_score["specifity"], act_score["f1"]))
+
+    def print_runtime(self):
+        print("mean train time: " + str(np.mean(self.train_time)))
+        print("mean test time: " + str(np.mean(self.test_time)))

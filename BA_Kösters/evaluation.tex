@@ -1,5 +1,6 @@
 \section{Evaluation}\raggedbottom
-Im nachfolgenden Kapitel werden die Ergebnisse der praktischen Anwendung der Techniken aus Kapitel \ref{clf} auf die vorliegenden Datensätze in ausführlicher Weise ausgewertet. Hierfür wurde für jedes Verfahren eine Hyperparameteroptimierung durchgeführt, um herauszufinden, wie sich unterschiedliche Kombinationen aus  Merkmalsextraktion und den einstellbaren Hyperparametern qualitativ unterscheiden. Weiterhin sollen bestehende \textit{Trade-offs} (z.B. Qualität vs. Performance) erörtert werden.
+Im nachfolgenden Kapitel sollen nun die Ergebnisse der praktischen Anwendung der Klassifikationstechniken auf die vorliegenden Datensätze ausgewertet werden. Wie in den vorangegangenen Kapiteln besprochen, wird erwartet, dass verschiedene Techniken der Merkmalsextraktion, verschiedene Level der Dimensionalitätsreduktion und verschiedene Hyperparametereinstellungen die Ergebnisse qualitativ beeinflussen werden. Eine Methode, die es ermöglicht, diese Unterschiede zu messen und gleichzeitig die beste Kombination zu bestimmen, ist die sogenannte Hyperparameteroptimierung. Hierbei ...
+
 \subsection{Implementierung} 
 Zwecks Nachvollziehbarkeit und Transparenz soll an dieser Stelle kurz auf die parallel erfolgte praktische Anwendung der beschriebenen Techniken eingegangen werden.\\
 Im Rahmen dieser Abschlussarbeit wurde ein Kommandozeilen-Tool namens \glqq TrollDetector\grqq{} \footnote{\url{https://github.com/rokoe102/trolldetector}} in der Programmiersprache Python entwickelt. Dieses hat mehrere Funktionen. Zum einen ist damit möglich, ein beliebiges Klassifikationsverfahren mit selbst gewählten Hyperparametern auf den Datensatz anzuwenden. Dies geschieht nach dem bereits erwähnten \glqq Train-and-Test\grqq-Verfahren. Hier sind auch Merkmalsextraktion (z.B. TF vs. TF-IDF) und Dimensionalitätsreduktion direkt steuerbar.\\
@@ -7,7 +8,7 @@ Eine weitere Funktion ist die Hyperparameteroptimierung für jedes Verfahren mit
 Schließlich ist es mit dem Programm noch möglich, einen Vergleich der fünf Klassifikatoren anzustellen. Die voreingestellten Hyperparameter sind jene, welche bei der Hyperparameteroptimierung am besten abgeschnitten haben, sodass eine Vergleichbarkeit hergestellt wird.\\
 Zur Verarbeitung und Klassifikation des Datensatzes wurden ausschließlich Klassen und Funktionen aus der \glqq scikit-learn\grqq-Bibliothek von \citet{scikit-learn} verwendet.
 \pagebreak\pagebreak
-\subsection{Verfahren im Einzelnen}
+\subsection{Hyperparameteroptimierungen}
 Zu Beginn soll jedes Verfahren einzeln auf die Eignung als Trollerkennungsinstrument untersucht werden. Hierzu werden die Ergebnisse der Hyperparameteroptimierungen diskutiert. Folgende Hyperparameter teilen sich dabei alle Verfahren, da die Merkmalsextraktion bei ihnen gleich abläuft:
 \begin{table}[htb]
 	\begin{center}
@@ -158,3 +159,19 @@ Auch bei den Parametern der Merkmalsextraktion sind diesmal deutlichere Untersch
 Die MLP-Klassifikation ist durch ihre hohen Punktzahlen in all ihren Varianten grundsätzlich für die Trollerkennung geeignet. In besonderem Maße gilt dies, wenn ReLu als Aktivierungsfunktion eingesetzt wird. Mit gut eingestellten Hyperparametern ist dieses Verfahren äußerst verlässlich. Interessant ist in diesem Zusammenhang folgendes: Die Trainingsphase mit Backpropagation wird bei einem Mehrschichtigen Perzeptron dann beendet, wenn sich der Klassifikationsscore $n$ Iterationen in Folge nicht um einen Toleranzwert $tol$ ändert. Um eine akzeptable Laufzeit zu gewährleisten, wurden die Werte bei der Hyperparameteroptimierung auf $n = 5$ und $tol = 0,25\%$ gesetzt. Dies bedeutet, dass sich bei Inkaufnahme einer langen Laufzeit die Punktzahlen in dem ein oder anderen Gütemaß um wenige Prozentpunkte verändern können.
 \pagebreak
 \subsection{Verfahren im Vergleich}
+Die 
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline 
+			Verfahren & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
+			KNN      & \textbf{0.958} & \textbf{0.943} & \textbf{0.973} & \textbf{0.972} & \textbf{0.945} & \textbf{0.957} \\ \hline
+			NB   & 0.830 & 0.779 & 0.898 & 0.907 & 0.759 & 0.838 \\ \hline 
+			SVM & 0.892 & 0.866 & 0.919 & 0.918 & 0.868 & 0.892 \\ \hline 
+			Baum   & 0.943 & 0.937 & 0.950 & 0.947 & 0.940 & 0.942 \\ \hline
+			MLP   & 0.934 & 0.926 & 0.943 & 0.939 & 0.929 & 0.932 \\ \hline \hline
+			durchschnittl. & 0.911 & 0.890 & 0.937 & 0.937 & 0.888 & 0.912 \\ \hline
+		\end{tabular}
+		\caption{Ergebnisse im Vergleich}\label{results-all}
+	\end{center}
+\end{table}\\

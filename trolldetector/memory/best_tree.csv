@@ -1,4 +1,4 @@
-score,0.9503537314330812
+score,0.951019079201158
 clf,DecisionTreeClassifier()
 clf__criterion,entropy
 clf__random_state,42

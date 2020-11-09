@@ -39,7 +39,9 @@ def compare(verbose):
     tree_params = mem.load("tree")
     mlp_params = mem.load("MLP")
 
+
     parameter_space = [knn_params,nb_params,svm_params,tree_params,mlp_params]
+
 
 
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll"),
