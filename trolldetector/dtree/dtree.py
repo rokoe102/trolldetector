@@ -1,4 +1,5 @@
-from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import TruncatedSVD, SparsePCA
+
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
@@ -8,6 +9,7 @@ from sklearn.model_selection import GridSearchCV
 from parsing import prepare
 from report.hypoptreport import HypOptReport
 from memory import memory
+import pandas as pd
 
 def trainAndTest(test,metr,cargs):
 
@@ -33,6 +35,7 @@ def trainAndTest(test,metr,cargs):
     X_train_counts = count_vec.fit_transform(tweets)
     if cargs.tfidf:
         X_train_counts = tfidf_transformer.fit_transform(X_train_counts)
+
 
     # dimensionality reduction
     if cargs.verbose:
