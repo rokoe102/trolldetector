@@ -15,11 +15,9 @@ Der Begriff Wortsegmentierung bzw. \textbf{Tokenisierung} bezeichnet die Zerteil
 		\caption{Tokenisierung eines Beispielsatzes}\label{tokenization}
 	\end{center}
 \end{figure}\\
-Eine weitere Methode der Vorverarbeitung ist das Entfernen von \textbf{Stoppwörtern}. Dies sind sehr häufig auftretende Wörter wie \glqq der\grqq, \glqq die\grqq, \glqq das\grqq, \glqq und\grqq{} oder \glqq von\grqq, welche vornehmlich eine grammatikalische Funktion und keinen Informationsgehalt haben. (vgl. ebd., S. 533)\\
-Bei der \textbf{Lemmatisierung} \citep{Air06} werden mehrere Wörter unterschiedlicher Erscheinungsform, welche aber die gleiche Bedeutung haben, auf eine gemeinsame Grundform (genannt Lemma) zurückgeführt.  So lassen sich beispielsweise die deklinierten Substantive \glqq Wortes\grqq, \glqq Wörter\grqq, \glqq Wörtern\grqq auf \glqq Wort\grqq{} zurückführen, während die Grundform der konjugierten Verben \glqq schrieb\grqq, \glqq schreibe\grqq, \glqq schreibst\grqq{} und \glqq schreibt\grqq{} der Infinitiv \glqq schreiben\grqq ist. Ein verwandtes Konzept wird \textbf{Stemming} \citep{Air06} genannt. Der Unterschied zur Lemmatisierung besteht darin, dass das daraus resultierende Grundwort (hier: Stamm) kein natürlichsprachliches Wort sein muss, sondern in der Regel ein um Präfix und Suffix beschnittes Wort ist. Ein Beispiel hierfür ist die Reduzierung der Wörter \glqq gehen\grqq, \glqq umgehen\grqq und \glqq zugehen\grqq{} auf den Stamm \glqq geh-\grqq.\\
-Für die Lemmatisierung eines Textes wird auch das \textbf{Part-of-Speech (POS) Tagging} \citep{Kuma15} benötigt. Hierbei wird einem Token seine Wortart (z.B. Nomen, Verb, Adjektiv) oder ein anderes Label wie \glqq Interpunktion\grqq{} zugewiesen. Werkzeuge, die dieses Verfahren anwenden, werden POS-\textit{Tagger} genannt.
+Eine weitere Methode der Vorverarbeitung ist das Entfernen von \textbf{Stoppwörtern}. Dies sind sehr häufig auftretende Wörter wie \glqq der\grqq, \glqq die\grqq, \glqq das\grqq, \glqq und\grqq{} oder \glqq von\grqq, welche vornehmlich eine grammatikalische Funktion und keine Bedeutung im Sinne von Semantik haben. Ob die Filterung von Stoppwörtern angezeigt ist, hängt vom Anwendungsfall ab. Ein grundsätzlich denkbarer Fall wäre, dass Trolle in ihren Tweets entweder über- oder unterdurchschnittlich Gebrauch von diesen Wörtern machen. Eine Filterung würde dann zu einem Verlust von Unterscheidungsmerkmalen und damit zu einer erschwerten Klassifikation führen. Im Falle dass kein Unterschied zwischen Trollen und Nichttrollen in dieser Eigenschaft besteht, bringt die Filterung durch weniger zu berücksichtigende Token Performanceverbesserungen mit sich.\\
 \subsection{Feature Extraction}
-Bevor eine Klassifikation vorgenommen werden kann, müssen die Merkmale aus den vorliegenden Texten gewonnen und mit mathematischen Methoden strukturiert bzw. modelliert werden. Hierbei fällt die Wahl zumeist auf Vektorisierung.\\
+Bevor eine Klassifikation vorgenommen werden kann, müssen aus den vorliegenden Texten Merkmale gewonnen werden, welche einen Vergleich im Bezug auf Ähnlichkeit und Unterschiedlichkeit ermöglichen. Die extrahierten Merkmale bilden dann zusammengefasst in einem Merkmalvektor eine eindeutige numerische Repräsentation eines Textes. Die Vektorisierung schafft zudem die Grundlage für verschiedenste Operationen wie Abstandsmessungen, die später bei den Klassifikationsverfahren zum Einsatz kommen werden.\\
 Die einfachste Vektorisierungstechnik ist die \textbf{Bag-of-Words} (BoW) \citep{Ramos13}. Hier wird ein Text durch einen Vektor mit den Begriffshäufigkeiten (auch: \textit{Term Frequencies} (\textbf{TF})) aller zuvor extrahierten Tokens des Textkorpus repräsentiert. Bei einem Beispielkorpus mit den beiden Texten \glqq my coffee is too hot\grqq{} und \glqq my tea is too cold\grqq{} und dem zuvor extrahierten Vokabular
 \begin{flushleft}
 	\hfil\{ "my", "coffee", "hot", "tea", "cold" \}
@@ -39,12 +37,23 @@ Eine Möglichkeit, Wortkombinationen bzw. bestimmte Formulierungen als Merkmal z
 \begin{flushleft}
 	\hfil \{ \grqq Hier sehen \grqq, \grqq sehen Sie\grqq, \grqq Sie ein\grqq, \grqq ein Beispiel\grqq \}
 \end{flushleft}
-Alle vorausgegangenen Methoden der Merkmalsextraktion haben gemeinsam, dass sie keinen Aufschluss über Zusammenhänge der Wortbedeutungen (Semantik) geben. Dieses Problem versuchen die Techniken der \textbf{Worteinbettung} zu lösen. Ein prominentes Beispiel ist \textbf{Word2Vec} \citep{Mikolov13}. Die Grundidee ist hier, dass Begriffe, die eine ähnliche Bedeutung haben, in einem ähnlichen Kontext verwendet werden. Auf dieser Basis wird ein Vektor für jedes Wort im Vokabular durch ein neuronales Netz erzeugt. Die Entfernungen im daraus entstehenden Vektorraum geben dabei semantische Ähnlichkeiten wieder.
 \subsection{Dimensionalitätsreduktion}\label{dim-red}
 Bei sehr umfangreichen Datensätzen wie den mehr als 600.000 Tweets in dieser Arbeit werden in der Anwendung der zuvor beschriebenen Verfahren meist hochdimensionale Vektoren erzeugt. In der Folge werden viele Operationen bei späteren Algorithmen der Textklassifikation eine hohe Zeit- und Speicherkomplexität besitzen. Diesem Effekt versucht man im Voraus durch Dimensionalitätsreduktion entgegenzuwirken.\\
 Ein erstes verwendetes Verfahren ist die Hauptkomponentenanalyse bzw. \textbf{Principal Component Analysis} (PCA) \citep{Jol02}. Mit diesem ist es möglich, in der Punktwolke der vorhandenen Vektoren all jene Vektor-Komponenten herauszufinden, die für die größte Varianz verantwortlich sind, also den größten Informationsgehalt haben. Der mathematische Mechanismus dahinter ist die Hauptachsentransformation: Es wird eine Ladungsmatrix aus den Eigenvektoren der Kovarianzmatrix gebildet, aus welcher der Anteil der Varianz jeder Komponente an der Gesamtvarianz ersichtlich ist. In der Folge können Komponenten, welche wenig Varianz beitragen, ohne nennenswerten Informationsverlust verworfen werden.\\
-Eine andere Möglichkeit ist die \textbf{Nichtnegative Matrixfaktorisierung} (NMF) \citep{LeeSeung99}. Hier wird aus den $n$ Texten mit insgesamt $m$ Wörtern eine $m \times n$ Matrix gebildet, welche approximativ so faktorisiert wird, dass
-\begin{center}
-	$V \approx W H$
-\end{center}
-gilt, wobei W eine $m \times r$ Matrix und H eine $r \times n$ Matrix ist. Die $r$ Spalten von $W$ enthalten semantisch verwandte Wörter, welche zusammen einen Kontext bzw. ein Thema bilden. Voraussetzung für dieses Verfahren ist die Nichtnegativität von $V$.\pagebreak
+Eine mit PCA verwandte Methode ist die Singulärwertzerlegung (engl. \textit{singular value decomposition}, SVD) \citep{baker13}. Der Hauptunterschied ist hier, dass die Komponentenanalyse direkt auf den Merkmalvektoren und nicht auf der Kovarianzmatrix ausgeführt wird. Am Ende erhält man eine Faktorisierung (Gleichung \ref{svd}) bestehend aus drei Matrizen.
+\begin{equation}
+	M = U \cdot \Sigma \cdot V^*
+	\label{svd}
+\end{equation}
+Die für die Reduktion entscheidende Matrix $\Sigma$ (siehe Beispiel in Gleichung \ref{svmatr}) enthält auf ihrer Diagonalen die sogenannten Singulärwerte (rot). Falls eine Dimensionsreduktion möglich ist, sind Spaltenvektoren bestehend aus Nullen (blau) als letzte Zeilen in $\Sigma$ vorhanden.
+\begin{equation}
+	\Sigma =
+\begin{pmatrix}
+\textcolor{red}{2}& 0 & 0 & \textcolor{blue}{0} \\
+0 & \textcolor{red}{1} & 0 & \textcolor{blue}{0} \\
+0 &0 & \textcolor{red}{1} & \textcolor{blue}{0} \\
+                0 & 0 & 0 & \textcolor{blue}{0}
+\end{pmatrix}
+\label{svmatr}
+\end{equation} 
+\pagebreak
