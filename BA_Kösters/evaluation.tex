@@ -1,22 +1,5 @@
 \section{Evaluation}\raggedbottom
-Im nachfolgenden Kapitel sollen nun die Ergebnisse der praktischen Anwendung der Klassifikationstechniken auf die vorliegenden Datensätze ausgewertet werden. Wie in den vorangegangenen Kapiteln besprochen, wird erwartet, dass verschiedene Techniken der Merkmalsextraktion, verschiedene Level der Dimensionalitätsreduktion und verschiedene Hyperparametereinstellungen die Ergebnisse qualitativ beeinflussen werden. Eine in dieser Arbeit angewandte Methode, die es ermöglicht, diese Unterschiede zu messen und gleichzeitig die beste Kombination zu bestimmen, ist die sogenannte Hyperparameteroptimierung. Hierbei wird das gewählte Verfahren wiederholt mit unterschiedlichen, zuvor gewählten Parameterkombinationen auf den Merkmalraum angewandt. Nach der Besprechung jener Optimierungsergebnisse im Einzelnen, sollen die Perfomances der Verfahren abschließend noch in einen Gesamtzusammenhang gestellt und verglichen werden.
-\subsection{Implementierung} 
-Zwecks Nachvollziehbarkeit und Transparenz soll an dieser Stelle kurz auf die parallel erfolgte praktische Anwendung der beschriebenen Techniken eingegangen werden.\\
-Im Rahmen dieser Abschlussarbeit wurde ein Kommandozeilen-Tool namens \glqq TrollDetector\grqq{} \footnote{\url{https://github.com/rokoe102/trolldetector}} in der Programmiersprache Python entwickelt. Dieses hat mehrere Funktionen. Zum einen ist damit möglich, ein beliebiges Klassifikationsverfahren mit selbst gewählten Hyperparametern auf den Datensatz anzuwenden. Dies geschieht nach dem bereits erwähnten \glqq Train-and-Test\grqq-Verfahren. Hier sind auch Merkmalsextraktion (z.B. TF vs. TF-IDF) und Dimensionalitätsreduktion direkt steuerbar.\\
-Eine weitere Funktion ist die Hyperparameteroptimierung für jedes Verfahren mit anschließender Auswertung der Ergebnisse. Für die Optimierung wird eine Rastersuche verwendet. Bei dieser Methode wird das jeweilige Klassifikationsverfahren auf einer fest definierten Untermenge aller möglichen Kombinationen von Hyperparametern ausgeführt. Anschließend werden die Ergebnisse der Kombinationen ausgewertet.\\
-Schließlich ist es mit dem Programm noch möglich, einen Vergleich der fünf Klassifikatoren anzustellen. Die voreingestellten Hyperparameter sind jene, welche bei der Hyperparameteroptimierung am besten abgeschnitten haben, sodass eine Vergleichbarkeit hergestellt wird.\\
-Zur Verarbeitung und Klassifikation des Datensatzes wurden ausschließlich Klassen und Funktionen aus der \glqq scikit-learn\grqq-Bibliothek von \citet{scikit-learn} verwendet.\\
-\pagebreak
-\subsection{Erklärte Varianz}
-Ein Hyperparameter, der grundsätzlich auch in der Rastersuche mit berücksichtigt werden kann, ist das Level der Dimensionalitäsreduktion. Dies bringt jedoch einen fundamentalen Konflikt mit sich: Das Testen von mehreren Werten für die Dimensionen würde gleichsam ein Vielfaches an Ausführungen und damit eine deutlich gesteigerte Laufzeit mit sich bringen. Andererseits liefern mehr Vektorkomponenten auch mehr Informationsgehalt (eine größere Varianz) und damit bessere Ergebnisse, die auch interessant für die Optimierung sind. Letztere Proportionalität ermöglicht aber auch eine alternative Vorgehensweise: Man kann das Reduktionslevel $d$ für alle Ausführungen konstant wählen. In diesem Fall ist es entscheidend, ein $d$ zu wählen, was den Anforderungen der Laufzeit und der Qualität gerecht werden kann. Wie in Kapitel \ref{dim-red} beschrieben, kann der Informationsgehalt der einzelnen Vektorkomponenten im Zuge einer Hauptkomponentenanalyse oder einer Singulärwertzerlegung ermittelt werden. Man spricht hier von der durch eine Komponente \textbf{erklärten Varianz}.
-\begin{figure}[htb]
-	\begin{center}
-		\includegraphics[width=0.95\textwidth]{bilder/expvar.png}
-		\caption{Erklärte Varianz der Komponenten}\label{expvar}
-	\end{center}
-\end{figure}\\
-Abbildung \ref{expvar} zeigt nun die 30 höchsten Werte der erklärten Varianz nach einer Singulärwertzerlegung der Vektoren des Datensatzes. Demnach erklären 3 Komponenten über 2\% der Varianz, 5 Komponenten zwischen 2 und 1\% der Varianz und der Rest die übrige Varianz. Kumuliert man diese Werte, werden durch die besten 10 Komponenten (rot) 15\% der Varianz erklärt. Dies ist für die geringe Anzahl der Komponenten ein vertretbarer Informationsgehalt. Da $d = 10$ gleichzeitig ebenfalls laufzeitverträglich ist, wird dieser Wert konstant für alle nachfolgenden Anwendungen gewählt.
-\pagebreak
+Im nachfolgenden Kapitel sollen nun die Ergebnisse der praktischen Anwendung der Klassifikationstechniken auf die vorliegenden Datensätze ausgewertet werden. Nach der Besprechung jener Optimierungsergebnisse im Einzelnen, sollen die Perfomances der Verfahren abschließend noch in einen Gesamtzusammenhang gestellt und verglichen werden.
 \subsection{Hyperparameteroptimierungen}
 Zu Beginn soll jedes Verfahren einzeln auf die Eignung als Trollerkennungsinstrument untersucht werden. Hierzu werden die Ergebnisse der Hyperparameteroptimierungen diskutiert. Folgende Hyperparameter teilen sich dabei alle Verfahren, da die Merkmalsextraktion bei ihnen gleich abläuft:
 \begin{table}[htb]
@@ -30,11 +13,9 @@ Zu Beginn soll jedes Verfahren einzeln auf die Eignung als Trollerkennungsinstru
 		\end{tabular}
 		\caption{gemeinsame Hyperparameter aller Verfahren}\label{common-params}
 	\end{center}
-\end{table}\\
-Alle anderen Parameter sind verfahrensspezifisch.
+\end{table}
 \subsubsection{k-Nearest-Neighbor-Algorithmus}
-Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahren geteilt werden, die Abstandsmetrik und der k-Wert für die zu untersuchenden Nachbarn gegeben.\\
-Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse verschiedener Ausprägungen aller Hyperparameter einerseits im Vergleich untereinander und im Vergleich zur durchschnittlichen und zur besten Performance. Hieraus lassen sich verschiedene Schlussfolgerungen ziehen:\\
+Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahren geteilt werden, die Abstandsmetrik und der k-Wert für die zu untersuchenden Nachbarn gegeben.
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
@@ -57,14 +38,13 @@ Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse verschiedener Ausprägu
 		\end{tabular}
 		\caption{Ergebnisse bei KNN}\label{results-knn}
 	\end{center}
-\end{table}\\\\
+\end{table}\\
+Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse der Ausprägungen aller Hyperparameter einerseits im Vergleich untereinander und im Vergleich zur durchschnittlichen und zur besten Performance. Hieraus lassen sich verschiedene Schlussfolgerungen ziehen:
 Insgesamt sind beim KNN-Algorithmus ausgezeichnete Zahlen zu beobachten. Im Maximum liegen  nahezu alle Kennzahlen über 95\%, positiv auffallend sind hier Werte der Segreganz und der Sensitivität von über 97\%. Durchschnittlich werden immer Punktzahlen von über 93\% erreicht. Ein Unterschied im Abschneiden unterschiedlicher Parametereinstellungen ist bei der Merkmalsgewichtung zu erkennen: TF erreicht hier ein wenig bessere Punktzahlen als TF-IDF. Die Filterung von englischen Stoppwörtern bringt im Mittel keine Verbesserung hervor. Extrahiert man nur 1-Gramme, anstatt 1-Gramme und 2-Gramme, erreicht man bis zu 1\% höhere Punktzahlen.\\
 Bei den verfahrensspezifischen Hyperparametern gibt es nur wenige Schwankungen. Beim k-Wert deutet sich an, dass ein einstelliger Wert besser abschneidet als ein zweistelliger, die Verbesserungen belaufen sich aber nur auf höchstens 0,5\%. Bei den Metriken ist auffällig, dass unterschiedliche Arten der Abstandsmessungen nahezu keinen Unterschied in der Qualität hervorbringen, die Abweichungen betragen hier höchstens 0,1\%.\\
 Angesichts seiner durchweg hohen Punktzahlen in allen möglichen Gütemaßen ist der k-Nearest-Neighbor-Algorithmus sehr gut für die Erkennung von IRA-ähnlichen Trollen geeignet.
 \subsubsection{Naiver Bayes-Klassifikator}
-Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators ist die angenommene Verteilung der Merkmalvektoren. Getestet wurde mit einer Normalverteilung, einer Multinomialverteilung und einer komplementären Verteilung nach >Rennie et al. (2003)<.\\
-Die Ergebnisse in Tabelle \ref{results-nb} lassen folgende Schlüsse zu:\\
-Dieses Verfahren schneidet je nach Parameter-Einstellung sehr unterschiedlich ab. So liefert die Annahme einer Normalverteilung oder einer komplementären Verteilung Punktzahlen von 75 - 85\%.
+Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators ist die angenommene Verteilung der Merkmalvektoren. Getestet wurde mit einer Normalverteilung, einer Multinomialverteilung und einer komplementären Verteilung nach >Rennie et al. (2003)<.
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
@@ -86,14 +66,13 @@ Dieses Verfahren schneidet je nach Parameter-Einstellung sehr unterschiedlich ab
 		\caption{Ergebnisse bei NB}\label{results-nb}
 	\end{center}
 \end{table}\\
+Die Ergebnisse in Tabelle \ref{results-nb} lassen folgende Schlüsse zu:
+Dieses Verfahren schneidet je nach Parameter-Einstellung sehr unterschiedlich ab. So liefert die Annahme einer Normalverteilung oder einer komplementären Verteilung Punktzahlen von 75 - 85\%.
 Bei einer Multinomialverteilung sind die Ergebnisse im Durchschnitt deutlich schlechter. Beispielsweise ist die mittlere Treffergenauigkeit 58,5\% und die mittlere Sensitivität bei nur 19,8\%. Es gibt hierbei sehr starke, gleichzeitige Ausreißer nach oben und unten: In Kombination mit TF-IDF wird eine Spezifität von 100\% bei einer Sensitivität von 0\% erreicht, weshalb die Treffergenauigkeit hier etwa 50\% beträgt.\\
 Bei der Merkmalgewichtung schneiden TF und TF-IDF in einer Hälfte der Gütemaße besser ab. Das Unterlassung einer Filterung von englischen Stoppwörtern führt auch bei diesem Verfahren zu leicht besseren Ergebnissen von 2 - 6\%.\\
 Lässt man die Annahme einer Multinomialverteilung außen vor, so werden mit dieser Methode Punktzahlen von durchschnittlich 75\% - 85\% erreicht, was gerade mit Einstellung der richtigen Hyperparameter zu relativ verlässlichen Ergebnissen führt. Unter diesen Voraussetzungen ist das Verfahren zur Trollerkennung durchaus geeignet.
 \subsubsection{Support Vector Machine}
-Die Klassifikation mit einer Support Vector Machine hat wie in Kapitel \ref{svm} beschrieben den Bestrafungsparameter C als einzigen verfahrensspezifischen Hyperparameter. Bei Ausführung der Optimierung kommen folgende Ergebnisse (Tabelle \ref{results-svm}) zustande:\\
-Insgesamt liefert die SVM im Mittel Punktzahlen von mindestens 80\% in allen betrachteten Gütemaßen. Beste Werte sind Segreganz und Sensitivität: Durchschnittlich werden hier ca. 93\% und im Maximum 97\% erreicht.\\
-Unterschiedliche Merkmalgewichtungen führen auch hier zu unterschiedlichen Ergebnissen. Sowohl TF als auch TF-IDF schneiden in drei von sechs Gütemaßen besser ab als das jeweils andere. Der stärkste Unterschied betrifft Segreganz und Sensitivität: Hier schneidet TF 6\% besser ab. Bei allen anderen Arten der Merkmalsextraktion gibt es nur wenige Schwankungen von höchstens 2\%.\\
-Beim Bestrafungsparameter C sind bis auf 0,1\% keine Schwankungen in den unterschiedlichen Ausprägungen auszumachen.\\
+Die Klassifikation mit einer Support Vector Machine hat wie in Kapitel \ref{svm} beschrieben den Bestrafungsparameter C als einzigen verfahrensspezifischen Hyperparameter.
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
@@ -115,6 +94,10 @@ Beim Bestrafungsparameter C sind bis auf 0,1\% keine Schwankungen in den untersc
 		\caption{Ergebnisse bei SVM}\label{results-svm}
 	\end{center}
 \end{table}\\
+Bei Ausführung der Optimierung kommen folgende Ergebnisse (Tabelle \ref{results-svm}) zustande:\\
+Insgesamt liefert die SVM im Mittel Punktzahlen von mindestens 80\% in allen betrachteten Gütemaßen. Beste Werte sind Segreganz und Sensitivität: Durchschnittlich werden hier ca. 93\% und im Maximum 97\% erreicht.\\
+Unterschiedliche Merkmalgewichtungen führen auch hier zu unterschiedlichen Ergebnissen. Sowohl TF als auch TF-IDF schneiden in drei von sechs Gütemaßen besser ab als das jeweils andere. Der stärkste Unterschied betrifft Segreganz und Sensitivität: Hier schneidet TF 6\% besser ab. Bei allen anderen Arten der Merkmalsextraktion gibt es nur wenige Schwankungen von höchstens 2\%.\\
+Beim Bestrafungsparameter C sind bis auf 0,1\% keine Schwankungen in den unterschiedlichen Ausprägungen auszumachen.\\
 Insgesamt ist die SVM-Klassifikation mit den erreichten Punktzahlen ziemlich verlässlich und daher für die Trollerkennung gut geeignet. Von Vorteil ist auch, dass die durchweg hohe Segreganz für ein niedriges $f_n$ spricht, was eine konservative Klassifikation, welche für die Trollerkennung wichtig ist, gewährleistet. Eine positive Eigenschaft ist außerdem die Stabilität des Verfahrens: Selbst mit wenigen bewussten oder zufälligen Einstellungen liefert das Verfahren immer noch gute Ergebnisse, was für eine Art Benutzerfreundlichkeit spricht.
 \subsubsection{Entscheidungsbäume}
 Bei der Entscheidungsbaum-Klassifikation sind neben den von allen geteilten Hyperparametern auch das Aufteilungskriterium gegeben. Die zwei Möglichkeiten sind hier die in Kapitel \ref{tree} beschriebenen Maße Gini Impurity und Entropie. Aus Tabelle \ref{results-tree} lassen sich folgende Schlüsse ziehen:\\
@@ -168,7 +151,7 @@ Auch bei den Parametern der Merkmalsextraktion sind diesmal deutlichere Untersch
 Die MLP-Klassifikation ist durch ihre hohen Punktzahlen in all ihren Varianten grundsätzlich für die Trollerkennung geeignet. In besonderem Maße gilt dies, wenn ReLu als Aktivierungsfunktion eingesetzt wird. Mit gut eingestellten Hyperparametern ist dieses Verfahren äußerst verlässlich. Interessant ist in diesem Zusammenhang folgendes: Die Trainingsphase mit Backpropagation wird bei einem Mehrschichtigen Perzeptron dann beendet, wenn sich der Klassifikationsscore $n$ Iterationen in Folge nicht um einen Toleranzwert $tol$ ändert. Um eine akzeptable Laufzeit zu gewährleisten, wurden die Werte bei der Hyperparameteroptimierung auf $n = 5$ und $tol = 0,25\%$ gesetzt. Dies bedeutet, dass sich bei Inkaufnahme einer langen Laufzeit die Punktzahlen in dem ein oder anderen Gütemaß um wenige Prozentpunkte verändern können.
 \pagebreak
 \subsection{Verfahren im Vergleich}
-Die 
+Abschließend werden nun alle Ergebnisse in einen Gesamtzusammenhang eingeordnet. Tabelle \ref{results-all} zeigt die Ergebnisse einer Rastersuche über alle fünf optimierten Algorithmen der Textklassifikation.  
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
@@ -184,3 +167,8 @@ Die
 		\caption{Ergebnisse im Vergleich}\label{results-all}
 	\end{center}
 \end{table}\\
+Im Durchschnitt werden mit allen Verfahren sehr gute Punktzahlen von mindestens 89\% erreicht. Bei Segreganz und Sensitivität sind sogar fast 94\% zu beobachten. Diese Werte sprechen dafür, dass sowohl Troll-Tweets als auch Nichttroll-Tweets mit einer hohen Zuverlässigkeit erkannt werden und dass die Gefahr einer Verwechslung eher gering ist. Somit kann für alle Verfahren eine grundsätzliche Eignung als Trollerkennungsinstrument festgestellt werden. Welches von ihnen in einem konkreten Fall zur Anwendung kommen sollte ist jedoch stets abhängig von den an die Ergebnisse gestellten Anforderungen.\\
+Ist Genauigkeit und Zuverlässigkeit das maßgebliche Kriterium, so ist die Wahl des k-Nearest-Neighbor-Algorithmus zu empfehlen. Dieser hat mit 94 - 97\% erkennbar die besten Ergebnisse aller Verfahren. Die Gefahr der Falschklassifikation ist hier mit unter 5\% besonders gering.\\
+Wird jedoch Wert auf eine gute Laufzeit gelegt, so ist der kNN-Algorithmus nicht die erste Wahl. Bei einer gegebenen Anzahl der Trainingsvektoren $N$ und die Anzahl der Dimensionen $d$ kann man die Zeitkomplexität mit $\Theta(dN + kN)$ angeben, sofern die Abstände gespeichert werden und mit $\Theta(kdN)$, falls dies nicht der Fall ist. Die Entscheidungsbaum-Klassifikation hat bei fast gleichwertiger Zuverlässigkeit eine Worst-Case-Laufzeit von $\mathcal{O}(d N \cdot \log(N))$ \citep{sani18}, schneidet jedoch im Mittel deutlich besser ab und hat hier deshalb einen entscheidenden Vorteil.\\
+Es sind in der Anwendung auch Szenarien denkbar, in denen eine Flexibilität bezüglich des Tradeoffs Genauigkeit versus Laufzeit gewünscht wird. Für diesen Fall ist die Klassifikation mit einem Mehrschichtigen Perzeptron zu empfehlen, da die Trainingszeit hier direkt steuerbar ist. Werden schnelle Ergebnisse gewünscht und ist eine geringere Genauigkeit tolerabel so kann die Trainingszeit kurz gewählt werden. Sollen die Ergebnisse jedoch genau sein und eine höhere Laufzeit kann in Kauf genommen werden, dann kann eine längere Trainingszeit einberaumt werden.\\
+Die Klassifikation mittels Support Vector Machine ist merkbar ungenauer als die drei hier zuerst genannten Verfahren und deshalb für die Trollerkennung eher zweite Wahl. Die Naive Bayes-Klassifikation ist als das mit Abstand ungenauste Verfahren am wenigsten für die Anwendung geeignet.

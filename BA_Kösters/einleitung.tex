@@ -15,22 +15,25 @@ Ein weitere tragende Säule von Desinformationskampagnen, welche meist in Verbin
 Alle bisher beschriebenen Strategien sind gemeinsam als integrative Gesamtstrategie dazu geeignet, um die Ausgänge demokratischer Wahlen zu beeinflussen. Die Initiative \glqq ichbinhier e.V.\grqq{} und das Londoner \glqq Institute for Strategic Dialogue\grqq{} (ISD) kamen in einer Studie beispielsweise zu der Schlüsselerkenntnis, dass rechtsextreme Trollnetzwerke im Bundestagswahlkampf 2017 Urheber einer ausgedehnten und erfolgreichen \glqq pro-AfD-Wahlkampagne\grqq{} waren \citep{ISD18}. Das Ziel der Desinformationskampagnen, gleich ob aus dem Inland oder Ausland gesteuert, ist die Destabilisierung der demokratischen Institutionen bzw. der Demokratie als Ganzes. Aus diesem Grund möchte ich in dieser Arbeit meinen Teil dazu beitragen, dass eine Lösung für dieses Problem gefunden wird.  
 \subsection{Datensätze}
 Im Rahmen dieser Arbeit soll ein Verfahren entwickelt werden, welches die zuverlässige Erkennung von Troll-Inhalten auf Twitter ermöglicht. Hierbei kommen verschiedenste Techniken der Textklassifikation zum Einsatz. Diese werden auf zwei Datensätze angewandt, auf deren Eigenschaften und Ursprünge an dieser Stelle eingegangen werden soll.\\
-Die Grundmenge des ersten Datensatzes ist eine von \citet{LinWar18} veröffentlichte Sammlung von rund 3 Millionen Tweets der IRA. Hier wurden die Tweets mit den zehn häufigsten Hashtags (siehe Tabelle \ref{tab_toptweets}) entnommen.\\
+Die Grundmenge des ersten Datensatzes ist eine von \citet{LinWar18} veröffentlichte Sammlung von rund 3 Millionen Tweets der IRA. Hier wurden die Tweets mit den zehn häufigsten Hashtags entnommen.\\
+Beim zweiten Datensatz handelt es sich um im Vorfeld eigens extrahierte Tweets von echten Profilen. Um eine thematische Ähnlichkeit herzustellen, wurden nur Tweets mit den gleichen Hashtags wie im ersten Datensatz ausgewählt. Dies ist entscheidend, da eine thematische Ferne gleichbedeutend mit einer zu offensichtlichen Unterscheidbarkeit ist. Die Ergebnisse der Klassifikation wären in diesem Fall erwartbar klar und würden damit einen geminderten praktischen Nutzen nach sich ziehen. Es ist in diesem Zusammenhang auch nicht unwichtig, dass Trolle sich oftmals als authentische Benutzer tarnen und in deren Diskussionsräume vordringen. Die Ergebnisse sind erst dann von Wert, wenn auch diese, in der Theorie schwieriger zu unterscheidenden User, gut unterschieden werden. Aus jenen genannten Gründen ist die thematische Nähe beider Datensätze von entscheidender Bedeutung. Weiterhin wurde darauf geachtet, dass die Hashtags ungefähr gleich unter den Tweets verteilt sind. Tabelle \ref{dist_hashtags} zeigt den prozentualen Anteil eines jeden Hashtags am Gesamtdatensatz. Hier sind Differenzen von höchstens 5\%, meist aber um die 1\% zu beobachten.\\
+Zur Sicherheit wurde am Ende der Extraktion die Mengendifferenz beider Datensätze gebildet um die Datensätze streng disjunkt zu halten.\\
 \begin{table}[htb]
 	\begin{center}
-		\begin{tabular}{|l|l||l|l|}
+		\begin{tabular}{|l|l|l||l|l|l|}
 			\hline
-			Platz & Hashtag & Platz & Hashtag \\ \hline \hline
-			1	& \#news	  & 6	& \#topNews\\ 
-			2	& \#sports & 7   & \#MAGA\\
-			3   & \#politics & 8 & \#BlackLivesMatter\\
-			4   & \#world	& 9 & \#health\\
-			5	& \#local	& 10 & \#tcot\\ \hline			
+			Hashtag & Troll & Nichttroll & Hashtag & Troll & Nichttroll  \\ \hline \hline
+			\#news	   & 42,50\%  & 40,50\% & \#topNews           & 05,00\% & 05,87\% \\ \hline
+			\#sports   & 16,06\%  & 15,99\% &  \#MAGA             & 05,07\% & 05,23\% \\
+			\#politics & 13,12\%  & 15,25\% & \#BlackLivesMatter  & 03,96\% & 04,56\% \\
+			\#world	   & 09,13\%   & 13,94\% & \#health            & 03,84\% & 04,60\% \\
+			\#local	   & 08,62\%   & 08,83\%  & \#tcot               & 03,99\% & 05,93\% \\ \hline			
 		\end{tabular}
-		\caption{Hashtags aus Datensatz 1}\label{tab_toptweets}
+		\caption{Verteilung der Hashtags}\label{dist_hashtags}
 	\end{center}
 \end{table}\\
-Beim zweiten Datensatz handelt es sich um im Vorfeld eigens extrahierte Tweets von echten Profilen. Damit thematische Ähnlichkeit besteht wurden nur Tweets, welche die zehn Hashtags aus dem anderen Datensatz enthalten, ausgewählt. Es wurde streng darauf geachtet, dass die Datensätze disjunkt sind. Tabelle \ref{tab_datasets} zeigt zum Vergleich die wichtigsten Kennzahlen beider Datensätze.
+Der neu entstehende zusammengesetzte Datensatz besteht aus knapp 630.000 Tweets. 
+Tabelle \ref{tab_datasets} zeigt zum Vergleich die wichtige Kennzahlen beider Bestandteile wie den Erstellungszeitraum und die durchschnittliche Länge der Zeichenketten.
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|l|l|l|}
