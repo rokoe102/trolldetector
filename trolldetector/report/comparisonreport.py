@@ -1,6 +1,7 @@
 import pandas as pd
-import numpy as np
 
+
+# stores and prints the results of the comparison of all classification techniques
 class ComparisonReport:
     def __init__(self, results):
         df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(), results["params"])), columns=["score", "params"])
@@ -39,17 +40,17 @@ class ComparisonReport:
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.test_time = df
 
-
-
         self.combinations = results["params"]
 
     def print(self):
+
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|                      REPORT                        |")
         print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
         print("|                    mean scores                     |")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
+        # print the mean score in every perfomance metric for every classifier
 
         print("                      \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
 
@@ -71,6 +72,8 @@ class ComparisonReport:
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|                    mean runtime                    |")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        # print the mean runtime for every classifier
 
         print("                      \ttrain time (s)\ttest time (s)\ttotal")
         for clf in self.train_time["clf"].unique():

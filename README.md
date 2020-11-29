@@ -1,4 +1,5 @@
 # TrollDetector
+This command line tool is used to apply five different classification techniques on a dataset consisting of troll and nontroll tweets.
 ## Installation
 
 1\. Clone this repository
@@ -15,13 +16,11 @@ pip install .
 ```
 
 ## Usage
-
-(use "python main.py" instead of "trolldetector" as the project is not finished yet)
 ### custom hyperparameters
 If you wish to execute any classification technique with custom hyperparameters, execute the program in the following manner:
 
 ```
-trolldetector [hyperparams] {KNN, NB, SVM, tree, MLP}
+trolldetector [common options] {KNN, NB, SVM, tree, MLP} [specific options]
 ```
 There are several options all techniques have in common:
 - ``` --tfidf ``` changes the  feature weighting from TF to TF-IDF
@@ -34,7 +33,7 @@ There are several options all techniques have in common:
 
 KNN specific options:
 - ```-k <value>``` determines the number of k nearest neighbors considered in computation (default: 5)
-- ```-m {euclidean, manhattan, chebyshev}``` changes the metric used to compute distance (default: euclidean)
+- ```-m {euclidean, manhattan}``` changes the metric used to compute distance (default: euclidean)
 
 NB specific options:
 - ``` -d {gaussian, multinomial, complement}``` changes the assumed distribution (default: gaussian)
@@ -47,14 +46,19 @@ tree specific options:
 
 MLP specific options:
 - ```-a {relu, tanh, logistic}``` changes the activation function (default: relu)
+- ```--iter <n>```tells the neuronal network to stop after n iterations of no change higher than tol (default: 5)
+- ```--tol <f>```determines tolerance for stopping condition (default: 0.0025)
 
 Example of execution with default hyperparameters:
 ```
 trolldetector KNN
 ```
-Example of execution with custom hyperparameters:
+Examples of execution with custom hyperparameters:
 ```
-trolldetector --tfidf -ngram 2 --dim 10 --test 0.2 -d multinomial NB
+trolldetector --tfidf -ngram 2 --dim 15 --test 0.2 NB -d multinomial
+```
+```
+trolldetector --dim 2 --test 0.01 MLP -a tanh --iter 7 --tol 0.005
 ```
 
 ### hyperparameter optimization
@@ -64,7 +68,7 @@ trolldetector --optimize KNN
 ```
 Other options except ```-v``` and ```-h``` will be ignored.
 
-### comparison of classificators
+### comparison of classifiers
 If you wish to compare the performances of all the techniques, select the ```all``` command:
 ```
 trolldetector all

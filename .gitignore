@@ -9,7 +9,6 @@
 *.run.xml
 *.synctex.gz
 *.toc
-*.log
 /.idea
 /venv/
 trolldetector/KNN/__pycache__

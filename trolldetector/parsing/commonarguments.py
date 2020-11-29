@@ -1,3 +1,5 @@
+# wrapper class for the CL arguments all commands are sharing
+
 class CommonArguments:
     def __init__(self, ngram, tfidf, stop, dims, verbose):
         self.ngram = ngram
@@ -7,13 +9,13 @@ class CommonArguments:
         self.verbose = verbose
 
     def print(self):
-        if self.tfidf == False:
+        if not self.tfidf:
             print("selected feature weighting: TF")
         else:
             print("selected feature weighting: TF-IDF")
         print("selected n for n-grams: " + str(self.ngram))
         print("filtering english stop words:", end=" ")
-        if self.stop == True:
+        if self.stop:
             print("ON")
         else:
             print("OFF")

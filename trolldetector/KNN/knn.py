@@ -1,18 +1,18 @@
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.model_selection import GridSearchCV
-from sklearn.neighbors import KNeighborsClassifier, DistanceMetric as dm
-from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
+
+from memory import memory
 from parsing import prepare
 from report.hypoptreport import HypOptReport
-from memory import memory
-import numpy as np
 
 
-# use the KNN method with custom hyperparameters
-def trainAndTest(k, metr,  test, cargs):
+# use the kNN algorithm with custom hyperparameters
+def train_and_test(k, metr,  test, cargs):
 
     print("+--------------------------------------------------------+")
     print("classification technique: k-nearest neighbor algorithm")
@@ -35,7 +35,7 @@ def trainAndTest(k, metr,  test, cargs):
         print("preprocessing")
 
     X_train_counts = count_vec.fit_transform(tweets)
-    if cargs.tfidf == True:
+    if cargs.tfidf:
         X_train_counts = tfidf_transformer.fit_transform(X_train_counts)
 
 
@@ -78,8 +78,7 @@ def trainAndTest(k, metr,  test, cargs):
     print(metrics.classification_report(y_test, predicted))
 
 
-# hyperparameter optimization for KNN hyperparameters
-
+# performing a hyperparameter optimization for kNN hyperparameters
 def optimize(test, verbose):
     print("+---------------------------------------------------------------+")
     print("| hyperparameter optimization for: k-Nearest neighbor algorithm |")
@@ -102,7 +101,7 @@ def optimize(test, verbose):
         ("clf", KNeighborsClassifier())
     ])
 
-
+    # the combinations to test
     parameter_space = {"clf": [KNeighborsClassifier()],
                        "vect__ngram_range": [(1,1),(1,2)],
                        "vect__stop_words": [None, "english"],
@@ -111,7 +110,7 @@ def optimize(test, verbose):
                        "clf__metric": ["euclidean", "manhattan"]
                        }
 
-
+    # definition of the performance metrics
     scorers = {"precision_score": metrics.make_scorer(metrics.precision_score, pos_label="troll",zero_division=True),
                "npv_score": metrics.make_scorer(metrics.precision_score, pos_label="nontroll",zero_division=True),
                "recall_score": metrics.make_scorer(metrics.recall_score, pos_label="troll"),
@@ -120,11 +119,11 @@ def optimize(test, verbose):
                "f1_score": metrics.make_scorer(metrics.f1_score, pos_label="troll")
                }
 
-    # execute a grid search: testing every combination of hyperparameters
-
+    # execute a grid search cross validation with 2 folds
     clf = GridSearchCV(pipe, parameter_space,n_jobs=5,cv=2,scoring=scorers,refit=False,verbose=3)
     clf.fit(X_train, y_train)
 
+    # save the best tuple in order to reuse it for the last comparison
     memory.save(clf.cv_results_, "KNN")
 
     report = HypOptReport("KNN", clf.cv_results_)

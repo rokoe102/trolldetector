@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 
-
-# noinspection PyStringFormat
+# stores and prints the results of an executed hyperparameter optimization
 class HypOptReport:
     def __init__(self, technique, results):
         self.technique = technique
@@ -47,7 +46,7 @@ class HypOptReport:
 
         self.test_time = results["mean_score_time"].tolist()
 
-
+    # print the results for the technique specific hyperparams
     def print(self):
         self.print_common()
         if self.technique == "KNN":
@@ -68,7 +67,6 @@ class HypOptReport:
 
     # print rankings for all combinations and mean scores for the
     # most common hyperparameters (TF/TF-IDF, n-grams, stop words)
-
     def print_common(self):
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|                      REPORT                        |")
@@ -174,8 +172,7 @@ class HypOptReport:
             rank += 1
 
 
-        # show mean scores for
-
+        # show mean scores for shared hyperparameters
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print("|            hyperparameters in detail               |")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")

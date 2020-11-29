@@ -1,8 +1,8 @@
 import pandas as pd
-import sklearn.neighbors
 from sklearn import naive_bayes, neighbors, svm, tree, neural_network, preprocessing
 
-# get a dict of hyperparameters from save file
+# get a dict of hyperparameters from save file in order to use them
+# for the comparison of all techniques
 def load(technique):
      dict = []
      if technique == "KNN":
