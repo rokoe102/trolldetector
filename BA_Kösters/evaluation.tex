@@ -11,7 +11,7 @@ Zu Beginn soll jedes Verfahren einzeln auf die Eignung als Trollerkennungsinstru
 			Stoppwort-Filterung & keine, englisch\\ \hline
 			n-Gramm-Extraktion & 1-Gramme, 1+2-Gramme\\ \hline			
 		\end{tabular}
-		\caption{gemeinsame Hyperparameter aller Verfahren}\label{common-params}
+		\caption{Gemeinsame Hyperparameter aller Verfahren}\label{common-params}
 	\end{center}
 \end{table}
 \subsubsection{k-Nearest-Neighbor-Algorithmus}
@@ -36,7 +36,7 @@ Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahre
 			Maximum  & 0.960 & 0.948 & 0.973 & 0.972 & 0.950 & 0.959 \\ \hline
 			durchschnittl. & 0.950 & 0.934 & 0.965 & 0.964 & 0.937 & 0.949 \\ \hline
 		\end{tabular}
-		\caption{Ergebnisse bei KNN}\label{results-knn}
+		\caption{Ergebnisse des kNN-Algorithmus}\label{results-knn}
 	\end{center}
 \end{table}\\
 Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse der Ausprägungen aller Hyperparameter einerseits im Vergleich untereinander und im Vergleich zur durchschnittlichen und zur besten Performance. Hieraus lassen sich verschiedene Schlussfolgerungen ziehen:
@@ -44,7 +44,7 @@ Insgesamt sind beim KNN-Algorithmus ausgezeichnete Zahlen zu beobachten. Im Maxi
 Bei den verfahrensspezifischen Hyperparametern gibt es nur wenige Schwankungen. Beim k-Wert deutet sich an, dass ein einstelliger Wert besser abschneidet als ein zweistelliger, die Verbesserungen belaufen sich aber nur auf höchstens 0,5\%. Bei den Metriken ist auffällig, dass unterschiedliche Arten der Abstandsmessungen nahezu keinen Unterschied in der Qualität hervorbringen, die Abweichungen betragen hier höchstens 0,1\%.\\
 Angesichts seiner durchweg hohen Punktzahlen in allen möglichen Gütemaßen ist der k-Nearest-Neighbor-Algorithmus sehr gut für die Erkennung von IRA-ähnlichen Trollen geeignet.
 \subsubsection{Naiver Bayes-Klassifikator}
-Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators ist die angenommene Verteilung der Merkmalvektoren. Getestet wurde mit einer Normalverteilung, einer Multinomialverteilung und einer komplementären Verteilung nach >Rennie et al. (2003)<.
+Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators ist die angenommene Verteilung der Merkmalvektoren. Getestet wurde mit einer Normalverteilung, einer Multinomialverteilung und einer komplementären Verteilung \citet{rennie03}.
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
@@ -63,7 +63,7 @@ Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators
 			Maximum        & 0.834 & 1.000 & 0.949 & 0.958 & 1.000 & 0.855 \\ \hline
 			durchschnittl. & 0.724 & 0.785 & 0.751 & 0.628 & 0.814 & 0.615 \\ \hline
 		\end{tabular}
-		\caption{Ergebnisse bei NB}\label{results-nb}
+		\caption{Ergebnisse der Naiven Bayes-Klassifikation}\label{results-nb}
 	\end{center}
 \end{table}\\
 Die Ergebnisse in Tabelle \ref{results-nb} lassen folgende Schlüsse zu:
@@ -91,7 +91,7 @@ Die Klassifikation mit einer Support Vector Machine hat wie in Kapitel \ref{svm}
 			Maximum        & 0.892 & 0.867 & 0.970 & 0.974 & 0869 & 0.892 \\ \hline
 			durchschnittl. & 0.871 & 0.825 & 0.930 & 0.932 & 0.815 & 0.875 \\ \hline
 		\end{tabular}
-		\caption{Ergebnisse bei SVM}\label{results-svm}
+		\caption{Ergebnisse der SVM-Klassifikation}\label{results-svm}
 	\end{center}
 \end{table}\\
 Bei Ausführung der Optimierung kommen folgende Ergebnisse (Tabelle \ref{results-svm}) zustande:\\
