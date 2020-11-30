@@ -1,0 +1,3 @@
+include README.md
+include trolldetector/datasets/*.csv
+include trolldetector/memory/*.csv

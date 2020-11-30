@@ -1,11 +1,11 @@
 import argparse
-from KNN import knn
-from MLP import mlp
-from NB import nb
-from SVM import svm
-from all import all
-from dtree import dtree
-from parsing.commonarguments import CommonArguments
+from trolldetector.KNN import knn
+from trolldetector.MLP import mlp
+from trolldetector.NB import nb
+from trolldetector.SVM import svm
+from trolldetector.all import all
+from trolldetector.dtree import dtree
+from trolldetector.parsing.commonarguments import CommonArguments
 
 #if __name__ == "__main__":
 def main():
