@@ -6,9 +6,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 
-from memory import memory as mem
-from parsing import prepare
-from report.comparisonreport import ComparisonReport
+from ..memory import memory as mem
+from ..parsing import prepare
+from ..report.comparisonreport import ComparisonReport
 
 
 # performing a grid search over all 5 classification techniques
@@ -52,7 +52,7 @@ def compare(verbose):
                }
 
     # execute a grid search cross validation with 2 folds
-    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, scoring=scorers, refit=False, verbose=verbose)
+    clf = GridSearchCV(pipe, parameter_space, n_jobs=5, cv=2, scoring=scorers, refit=False, verbose=2)
     clf.fit(X_train, y_train)
 
     results = clf.cv_results_

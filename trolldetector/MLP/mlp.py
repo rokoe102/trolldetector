@@ -5,18 +5,19 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn import metrics
-from parsing import prepare
-from report.hypoptreport import HypOptReport
-from memory import memory
+from ..parsing import prepare
+from ..report.hypoptreport import HypOptReport
+from ..report.customreport import CustomReport
+from ..memory import memory
+from prettytable import PrettyTable, ALL
+
 
 # use the multi-layer perceptron with custom hyperparameters
 def train_and_test(actFunc,iter, tol,test, cargs):
 
-    print("+-------------------------------------------------------------+")
-    print("classification technique: multi-layer perceptron classification")
-    cargs.print()
-    print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("+-------------------------------------------------------------+")
+    # print a summary of the selected arguments
+    print_summary(actFunc,iter,tol,test,cargs)
+
     if cargs.verbose:
         print("loading datasets")
 
@@ -58,22 +59,8 @@ def train_and_test(actFunc,iter, tol,test, cargs):
     predicted = mlp.predict(X_test)
 
     # report the results
-    print("+----------------------------------------------------+")
-    print("|                      REPORT                        |")
-    print("+----------------------------------------------------+")
-
-    # print the entries of the confusion matrix
-
-    tn, fp, fn, tp = metrics.confusion_matrix(y_test, predicted).ravel()
-    print("true negatives: " + str(tn))
-    print("false negatives: " + str(fn))
-    print("true positives: " + str(tp))
-    print("false positives: " + str(fp))
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-    # print a classification report with the results for all performance metrics
-
-    print(metrics.classification_report(y_test, predicted))
+    report = CustomReport(y_test, predicted)
+    report.print()
 
 
 # performing a hyperparameter optimization for the MLP classification
@@ -105,7 +92,7 @@ def optimize(test, verbose):
                        "clf__activation": ["relu","tanh","logistic"],
                        "clf__n_iter_no_change": [5],
                        "clf__max_iter": [50],
-                       "clf__tol": [0.001],
+                       "clf__tol": [0.0025],
                        "clf__early_stopping": [True],
                        "clf": [MLPClassifier()],
                        "clf__random_state": [42]
@@ -130,3 +117,21 @@ def optimize(test, verbose):
 
     report = HypOptReport("MLP", clf.cv_results_)
     report.print()
+
+def print_summary(actFunc, iter, tol, test, cargs):
+    print("+---------------------------------------------------------------+")
+    print("|                   custom hyperparameters                      |")
+    print("+---------------------------------------------------------------+")
+
+    t = PrettyTable(header=False)
+    t.hrules = ALL
+    t.add_row(["technique", "multi-layer perceptron"])
+    t.add_row(["activation function", actFunc])
+    t.add_row(["stopping condition", "{} iterations < {}".format(iter, tol)])
+
+    t = cargs.get_rows(t)
+
+    t.add_row(["training set", "{} %".format((1 - test) * 100)])
+    t.add_row(["test set", "{} %".format(test * 100)])
+
+    print(t)

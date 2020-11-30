@@ -7,20 +7,21 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, ComplementNB, Bernoul
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 
-from memory import memory
-from parsing import prepare
-from report.hypoptreport import HypOptReport
+from ..memory import memory
+from ..parsing import prepare
+from ..report.hypoptreport import HypOptReport
+from ..report.customreport import CustomReport
+
+from prettytable import PrettyTable, ALL
+
 
 
 # use the naive Bayes classification with custom hyperparameters
 def train_and_test(test,dist,cargs):
 
-    print("+----------------------------------------------------+")
-    print("classification technique: Naive Bayes classifyer")
-    print("presumed distribution: " + dist)
-    cargs.print()
-    print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("+----------------------------------------------------+")
+    # print a summary of the selected arguments
+    print_summary(test,dist,cargs)
+
     if cargs.verbose:
         print("loading datasets")
 
@@ -111,29 +112,15 @@ def train_and_test(test,dist,cargs):
 
 
     # report the results
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print("|                      REPORT                        |")
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-    # print the entries of the confusion matrix
-
-    tn, fp, fn, tp = metrics.confusion_matrix(y_test, predicted).ravel()
-    print("true negatives: " + str(tn))
-    print("false negatives: " + str(fn))
-    print("true positives: " + str(tp))
-    print("false positives: " + str(fp))
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-    # print a classification report with the results for all performance metrics
-
-    print(metrics.classification_report(y_test, predicted,zero_division=1))
+    report = CustomReport(y_test,predicted, "NB")
+    report.print()
 
 
 # performing a hyperparameter optimization for the naive Bayes classification
 def optimize(test, verbose):
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+-------------------------------------------------------------+")
     print("| hyperparameter optimization for: Naive Bayes classification |")
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+-------------------------------------------------------------+")
     if verbose:
         print("loading datasets")
 
@@ -191,3 +178,20 @@ def optimize(test, verbose):
 
     report = HypOptReport("NB", clf.cv_results_)
     report.print()
+
+def print_summary(test, dist, cargs):
+    print("+---------------------------------------------------------------+")
+    print("|                   custom hyperparameters                      |")
+    print("+---------------------------------------------------------------+")
+
+    t = PrettyTable(header=False)
+    t.hrules = ALL
+    t.add_row(["technique", "Naive Bayes"])
+    t.add_row(["distribution", dist])
+
+    t = cargs.get_rows(t)
+
+    t.add_row(["training set", "{} %".format((1 - test) * 100)])
+    t.add_row(["test set", "{} %".format(test * 100)])
+
+    print(t)

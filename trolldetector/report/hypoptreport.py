@@ -1,41 +1,44 @@
 import pandas as pd
 import numpy as np
+from prettytable import PrettyTable, ALL
 
 # stores and prints the results of an executed hyperparameter optimization
 class HypOptReport:
     def __init__(self, technique, results):
         self.technique = technique
 
-        df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(), results["std_test_accuracy_score"].tolist(), results["params"])), columns=["score","std","params"])
+        # store metric score, std deviation and the params for every performance metric
+
+        df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist() , results["params"])), columns=["score","params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.accuracy = df
 
-        df = pd.DataFrame(list(zip(results["mean_test_precision_score"].tolist(), results["std_test_precision_score"].tolist(), results["params"])),
-                          columns=["score","std", "params"])
+        df = pd.DataFrame(list(zip(results["mean_test_precision_score"].tolist(), results["params"])),
+                          columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.precision = df
 
         df = pd.DataFrame(list(
-            zip(results["mean_test_npv_score"].tolist(), results["std_test_precision_score"].tolist(),
+            zip(results["mean_test_npv_score"].tolist(),
                 results["params"])),
-                          columns=["score", "std", "params"])
+                          columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.npv = df
 
-        df = pd.DataFrame(list(zip(results["mean_test_recall_score"].tolist(), results["std_test_recall_score"].tolist(), results["params"])),
-                          columns=["score","std", "params"])
+        df = pd.DataFrame(list(zip(results["mean_test_recall_score"].tolist(), results["params"])),
+                          columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.recall = df
 
         df = pd.DataFrame(list(
-            zip(results["mean_test_specifity_score"].tolist(), results["std_test_precision_score"].tolist(),
+            zip(results["mean_test_specifity_score"].tolist(),
                 results["params"])),
-                          columns=["score", "std", "params"])
+                          columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.specifity = df
 
-        df = pd.DataFrame(list(zip(results["mean_test_f1_score"].tolist(), results["std_test_f1_score"], results["params"])),
-                          columns=["score","std", "params"])
+        df = pd.DataFrame(list(zip(results["mean_test_f1_score"].tolist(), results["params"])),
+                          columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.f_one = df
 
@@ -48,134 +51,62 @@ class HypOptReport:
 
     # print the results for the technique specific hyperparams
     def print(self):
-        self.print_common()
+        print("+----------------------------------------------------+")
+        print("|                      REPORT                        |")
+        print("+----------------------------------------------------+")
+
+        # print best tuple
+        self.print_best()
+
+        table = PrettyTable(["", "accuracy", "precision", "NPV", "recall", "specifity", "f1"])
+        table.hrules = ALL
+
+        table = self.add_common(table)
+
         if self.technique == "KNN":
-            self.print_knn()
+            table = self.print_knn(table)
         elif self.technique == "NB":
-            self.print_nb()
+            table = self.print_nb(table)
         elif self.technique == "SVM":
-            self.print_svm()
+            table = self.print_svm(table)
         elif self.technique == "tree":
-            self.print_dt()
+            table = self.print_dt(table)
         elif self.technique == "MLP":
-            self.print_mlp()
+            table = self.print_mlp(table)
         else:
             print("Error: no valid classification technique: " + self.technique)
 
+        print(table)
+
         self.print_runtime()
 
+    # print the hyperparameters with the best accuracy
+    def print_best(self):
+        print("+----------------------------------------------------+")
+        print("|                  best tuple                        |")
+        print("+----------------------------------------------------+")
 
-    # print rankings for all combinations and mean scores for the
-    # most common hyperparameters (TF/TF-IDF, n-grams, stop words)
-    def print_common(self):
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-        print("|                      REPORT                        |")
-        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-        print("|                  accuracy ranking                  |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        best = self.accuracy[self.accuracy["score"] == max(self.accuracy["score"])]
+        combination = best.to_dict("records")
+        combination = combination[0]
 
-        rank = 1
 
-        # print top 5 accuracy scores, std.deviation and params
-        zipped = sorted(zip(self.accuracy["score"], self.accuracy["std"], self.combinations),key= lambda t: t[0], reverse=True)
-        for mean, std, params in zipped:
-            if rank == 6:
-                break
-            print("[" + str(rank) + "]", end=" ")
-            print("%0.3f (+/-%0.03f) for %r"
-                  % (mean, std * 2, params))
-            rank += 1
+        print("best accuracy: %0.3f" % round(combination["score"], 3))
+        print("best tuple:", end=" ")
+        combination = {x: combination[x] for x in combination if x not in ["score"]}
+        print(combination)
 
-        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-        print("|                 precision ranking                  |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
-        rank = 1
 
-        # print top 5 precision scores, std.deviation and params
-        zipped = sorted(zip(self.precision["score"], self.precision["std"], self.combinations), key=lambda t: t[0],
-                        reverse=True)
-        for mean, std, params in zipped:
-            if rank == 6:
-                break
-            print("[" + str(rank) + "]", end=" ")
-            print("%0.3f (+/-%0.03f) for %r"
-                  % (mean, std * 2, params))
-            rank += 1
 
-        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-        print("|                    NPV ranking                     |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
-        rank = 1
-
-        # print top 5 NPV scores, std.deviation and params
-        zipped = sorted(zip(self.npv["score"], self.npv["std"], self.combinations), key=lambda t: t[0],
-                        reverse=True)
-        for mean, std, params in zipped:
-            if rank == 6:
-                break
-            print("[" + str(rank) + "]", end=" ")
-            print("%0.3f (+/-%0.03f) for %r"
-                  % (mean, std * 2, params))
-            rank += 1
-
-        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-        print("|                   recall ranking                   |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-        rank = 1
-
-        # print top 5 recall scores, std.deviation and params
-        zipped = sorted(zip(self.recall["score"], self.recall["std"], self.combinations), key=lambda t: t[0],
-                        reverse=True)
-        for mean, std, params in zipped:
-            if rank == 6:
-                break
-            print("[" + str(rank) + "]", end=" ")
-            print("%0.3f (+/-%0.03f) for %r"
-                  % (mean, std * 2, params))
-            rank += 1
-
-        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-        print("|                specifity ranking                   |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-        rank = 1
-
-        # print top 5 specifity scores, std.deviation and params
-        zipped = sorted(zip(self.specifity["score"], self.specifity["std"], self.combinations), key=lambda t: t[0],
-                        reverse=True)
-        for mean, std, params in zipped:
-            if rank == 6:
-                break
-            print("[" + str(rank) + "]", end=" ")
-            print("%0.3f (+/-%0.03f) for %r"
-                  % (mean, std * 2, params))
-            rank += 1
-
-        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
-        print("|                     f1 ranking                     |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-        rank = 1
-
-        # print top 5 f1 scores, std.deviation and params
-        zipped = sorted(zip(self.f_one["score"], self.f_one["std"], self.combinations), key=lambda t: t[0],
-                        reverse=True)
-        for mean, std, params in zipped:
-            if rank == 6:
-                break
-            print("[" + str(rank) + "]", end=" ")
-            print("%0.3f (+/-%0.03f) for %r"
-                  % (mean, std * 2, params))
-            rank += 1
-
+    # print mean scores for the most common hyperparameters (TF/TF-IDF, n-grams, stop words)
+    def add_common(self, table):
 
         # show mean scores for shared hyperparameters
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print("+----------------------------------------------------+")
         print("|            hyperparameters in detail               |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print("+----------------------------------------------------+")
 
         avg_score = {"accuracy": np.mean(self.accuracy["score"]),
                      "precision": np.mean(self.precision["score"]),
@@ -186,17 +117,15 @@ class HypOptReport:
 
                     }
 
+        table.add_row(["average",
+                       round(avg_score["accuracy"],3),
+                       round(avg_score["precision"],3),
+                       round(avg_score["npv"],3),
+                       round(avg_score["recall"],3),
+                       round(avg_score["specifity"],3),
+                       round(avg_score["f1"],3)
+                      ])
 
-        print("average scores")
-        print("\taccuracy\tprecision\tNPV   \t\trecall\t\tspecifity\tf1")
-        print("\t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f   \t%0.3f    \t%0.3f" % (
-        avg_score["accuracy"], avg_score["precision"], avg_score["npv"], avg_score["recall"], avg_score["specifity"],
-        avg_score["f1"]))
-
-
-        print("              +-------------------+                   ")
-        print("              | feature weighting |                   ")
-        print("              +-------------------+                   ")
 
         tfidf_score = {"accuracy": np.mean(self.accuracy[self.accuracy["tfidf__use_idf"] == True]["score"]),
                        "precision": np.mean(self.precision[self.precision["tfidf__use_idf"] == True]["score"]),
@@ -213,13 +142,25 @@ class HypOptReport:
                     "f1": np.mean(self.f_one[self.f_one["tfidf__use_idf"] == False]["score"])
                    }
 
-        print("      \taccuracy\tprecision\tNPV   \t\trecall\t\tspecifity\tf1")
-        print("TF    \t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f   \t%0.3f    \t%0.3f" % (tf_score["accuracy"], tf_score["precision"], tf_score["npv"], tf_score["recall"], tf_score["specifity"], tf_score["f1"]))
-        print("TF-IDF\t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f   \t%0.3f    \t%0.3f" % (tfidf_score["accuracy"], tfidf_score["precision"], tfidf_score["npv"], tfidf_score["recall"], tfidf_score["specifity"], tfidf_score["f1"]))
+        table.add_row(["TF",
+                       round(tf_score["accuracy"], 3),
+                       round(tf_score["precision"], 3),
+                       round(tf_score["npv"], 3),
+                       round(tf_score["recall"], 3),
+                       round(tf_score["specifity"], 3),
+                       round(tf_score["f1"], 3)
+                       ])
 
-        print("              +---------------------+                ")
-        print("              | stop word filtering |                ")
-        print("              +---------------------+                ")
+        table.add_row(["TF-IDF",
+                       round(tfidf_score["accuracy"], 3),
+                       round(tfidf_score["precision"], 3),
+                       round(tfidf_score["npv"], 3),
+                       round(tfidf_score["recall"], 3),
+                       round(tfidf_score["specifity"], 3),
+                       round(tfidf_score["f1"], 3)
+                       ])
+
+
 
         stop_score = {"accuracy": np.mean(self.accuracy[self.accuracy["vect__stop_words"] == "english"]["score"]),
                       "precision": np.mean(self.precision[self.precision["vect__stop_words"] == "english"]["score"]),
@@ -234,16 +175,26 @@ class HypOptReport:
                         "recall": np.mean(self.recall[self.recall["vect__stop_words"].isnull()]["score"]),
                         "specifity": np.mean(self.specifity[self.specifity["vect__stop_words"].isnull()]["score"]),
                         "f1": np.mean(self.f_one[self.f_one["vect__stop_words"].isnull()]["score"])
-                       }
+                        }
 
-        print("       \taccuracy\tprecision\tNPV   \t\trecall\t\tspecifity\tf1")
-        print("english\t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f   \t%0.3f   \t%0.3f" % (stop_score["accuracy"], stop_score["precision"], stop_score["npv"], stop_score["recall"], stop_score["specifity"], stop_score["f1"]))
-        print("none   \t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f   \t%0.3f   \t%0.3f" % (
-                nostop_score["accuracy"], nostop_score["precision"], nostop_score["npv"], nostop_score["recall"], nostop_score["specifity"], nostop_score["f1"]))
+        table.add_row(["english stopwords",
+                       round(stop_score["accuracy"], 3),
+                       round(stop_score["precision"], 3),
+                       round(stop_score["npv"], 3),
+                       round(stop_score["recall"], 3),
+                       round(stop_score["specifity"], 3),
+                       round(stop_score["f1"], 3)
+                       ])
 
-        print("                +--------------+                    ")
-        print("                | n-gram range |                    ")
-        print("                +--------------+                    ")
+        table.add_row(["no filtering",
+                       round(nostop_score["accuracy"], 3),
+                       round(nostop_score["precision"], 3),
+                       round(nostop_score["npv"], 3),
+                       round(nostop_score["recall"], 3),
+                       round(nostop_score["specifity"], 3),
+                       round(nostop_score["f1"], 3)
+                       ])
+
 
         onegram_score = {"accuracy": np.mean(self.accuracy[self.accuracy["vect__ngram_range"] == (1,1)]["score"]),
                          "precision": np.mean(self.precision[self.precision["vect__ngram_range"] == (1,1)]["score"]),
@@ -260,19 +211,30 @@ class HypOptReport:
                          "f1": np.mean(self.f_one[self.f_one["vect__ngram_range"] == (1, 2)]["score"])
                         }
 
-        print("      \taccuracy\tprecision\tNPV   \t\trecall \t\tspecifity\tf1")
-        print("(1,1) \t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f    \t%0.3f    \t%0.3f" % (onegram_score["accuracy"], onegram_score["precision"], onegram_score["npv"], onegram_score["recall"], onegram_score["specifity"], onegram_score["f1"]))
-        print("(1,2) \t%0.3f   \t%0.3f    \t%0.3f   \t%0.3f    \t%0.3f    \t%0.3f" % (
-                twogram_score["accuracy"], twogram_score["precision"], twogram_score["npv"], twogram_score["recall"], twogram_score["specifity"], twogram_score["f1"]))
+        table.add_row(["1-grams",
+                       round(onegram_score["accuracy"], 3),
+                       round(onegram_score["precision"], 3),
+                       round(onegram_score["npv"], 3),
+                       round(onegram_score["recall"], 3),
+                       round(onegram_score["specifity"], 3),
+                       round(onegram_score["f1"], 3)
+                       ])
+
+        table.add_row(["1+2-grams",
+                       round(twogram_score["accuracy"], 3),
+                       round(twogram_score["precision"], 3),
+                       round(twogram_score["npv"], 3),
+                       round(twogram_score["recall"], 3),
+                       round(twogram_score["specifity"], 3),
+                       round(twogram_score["f1"], 3)
+                       ])
+
+        return table
+
 
 
     # print tables with mean scores of every KNN specific hyperparameter
-    def print_knn(self):
-        print("                 +---------+                        ")
-        print("                 | k value |                        ")
-        print("                 +---------+                        ")
-
-        print("        \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
+    def print_knn(self, table):
 
         for k in self.accuracy["clf__n_neighbors"].unique():
             k_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__n_neighbors"] == k]["score"]),
@@ -282,14 +244,14 @@ class HypOptReport:
                        "specifity": np.mean(self.specifity[self.specifity["clf__n_neighbors"] == k]["score"]),
                        "f1": np.mean(self.f_one[self.f_one["clf__n_neighbors"] == k]["score"])
                       }
-                      
-            print("%-9s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % ("k = " + str(k), k_score["accuracy"], k_score["precision"], k_score["npv"], k_score["recall"], k_score["specifity"], k_score["f1"]))
-
-        print("                 +---------+                        ")
-        print("                 | metrics |                        ")
-        print("                 +---------+                        ")
-
-        print("         \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
+            table.add_row(["k = " + str(k),
+                           round(k_score["accuracy"],3),
+                           round(k_score["precision"],3),
+                           round(k_score["npv"],3),
+                           round(k_score["recall"],3),
+                           round(k_score["specifity"],3),
+                           round(k_score["f1"],3)
+                          ])
 
         for metric in self.accuracy["clf__metric"].unique():
             metric_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__metric"] == metric]["score"]),
@@ -300,17 +262,20 @@ class HypOptReport:
                             "f1": np.mean(self.f_one[self.f_one["clf__metric"] == metric]["score"])
                             }
 
-            print("%-10s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (metric, metric_score["accuracy"], metric_score["precision"], metric_score["npv"], metric_score["recall"], metric_score["specifity"], metric_score["f1"]))
+            table.add_row([metric,
+                           round(metric_score["accuracy"],3),
+                           round(metric_score["precision"],3),
+                           round(metric_score["npv"],3),
+                           round(metric_score["recall"],3),
+                           round(metric_score["specifity"],3),
+                           round(metric_score["f1"],3)
+                           ])
+        return table
 
 
     # print tables with mean scores of every Naive Bayes specific hyperparameter
-    def print_nb(self):
+    def print_nb(self, table):
 
-        print("           +-----------------------+                 ")
-        print("           | presumed distribution |                 ")
-        print("           +-----------------------+                 ")
-
-        print("        \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
 
         for dist in self.accuracy["clf"].unique():
             dist_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf"] == dist]["score"]),
@@ -321,18 +286,19 @@ class HypOptReport:
                           "f1": np.mean(self.f_one[self.f_one["clf"] == dist]["score"])
                          }
 
-            print("%-15s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
-            dist, dist_score["accuracy"], dist_score["precision"], dist_score["npv"], dist_score["recall"], dist_score["specifity"], dist_score["f1"]))
+            table.add_row([dist,
+                           round(dist_score["accuracy"],3),
+                           round(dist_score["precision"],3),
+                           round(dist_score["npv"],3),
+                           round(dist_score["recall"],3),
+                           round(dist_score["specifity"],3),
+                           round(dist_score["f1"],3)
+                           ])
+        return table
 
 
     # print tables with mean scores of every SVM specific hyperparameter
-    def print_svm(self):
-        # accuracy ranking of C value
-        print("                  +---------+                 ")
-        print("                  | C value |                 ")
-        print("                  +------ --+                 ")
-
-        print("      \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
+    def print_svm(self, table):
 
         for c in self.accuracy["clf__C"].unique():
             c_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__C"] == c]["score"]),
@@ -343,17 +309,20 @@ class HypOptReport:
                        "f1": np.mean(self.f_one[self.f_one["clf__C"] == c]["score"])
                        }
 
-            print("%-6s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
-                str(c), c_score["accuracy"], c_score["precision"], c_score["npv"], c_score["recall"], c_score["specifity"], c_score["f1"]))
+            table.add_row(["C = " + str(c),
+                           round(c_score["accuracy"],3),
+                           round(c_score["precision"],3),
+                           round(c_score["npv"],3),
+                           round(c_score["recall"],3),
+                           round(c_score["specifity"],3),
+                           round(c_score["f1"],3)
+                           ])
+        return table
+
 
 
     # print tables with mean scores of every Decision Tree specific hyperparameter
-    def print_dt(self):
-        print("                  +-----------+                 ")
-        print("                  | criterion |                 ")
-        print("                  +-----------+                 ")
-
-        print("       \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
+    def print_dt(self, table):
 
         for criterion in self.accuracy["clf__criterion"].unique():
             crit_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__criterion"] == criterion]["score"]),
@@ -364,17 +333,19 @@ class HypOptReport:
                           "f1": np.mean(self.f_one[self.f_one["clf__criterion"] == criterion]["score"])
                          }
 
-            print("%-7s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
-                criterion, crit_score["accuracy"], crit_score["precision"], crit_score["npv"], crit_score["recall"], crit_score["specifity"], crit_score["f1"]))
+            table.add_row([criterion,
+                           round(crit_score["accuracy"],3),
+                           round(crit_score["precision"],3),
+                           round(crit_score["npv"],3),
+                           round(crit_score["recall"],3),
+                           round(crit_score["specifity"],3),
+                           round(crit_score["f1"],3)
+                           ])
+        return table
 
 
     # print tables with mean scores of every MLP specific hyperparameter
-    def print_mlp(self):
-        print("           +---------------------+                 ")
-        print("           | activation function |                 ")
-        print("           +---------------------+                 ")
-
-        print("        \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
+    def print_mlp(self, table):
 
         for activation in self.accuracy["clf__activation"].unique():
             act_score = {"accuracy": np.mean(self.accuracy[self.accuracy["clf__activation"] == activation]["score"]),
@@ -385,9 +356,17 @@ class HypOptReport:
                          "f1": np.mean(self.f_one[self.f_one["clf__activation"] == activation]["score"])
                         }
 
-            print("%-8s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
-                activation, act_score["accuracy"], act_score["precision"], act_score["npv"], act_score["recall"], act_score["specifity"], act_score["f1"]))
+            table.add_row([activation,
+                           round(act_score["accuracy"],3),
+                           round(act_score["precision"],3),
+                           round(act_score["npv"],3),
+                           round(act_score["recall"],3),
+                           round(act_score["specifity"],3),
+                           round(act_score["f1"],3)
+                           ])
+        return table
 
     def print_runtime(self):
-        print("mean train time: " + str(np.mean(self.train_time)))
-        print("mean test time: " + str(np.mean(self.test_time)))
+        print("\n")
+        print("mean train time: {} seconds".format(round(np.mean(self.train_time))))
+        print("mean test time: {} seconds".format(round(np.mean(self.test_time))))

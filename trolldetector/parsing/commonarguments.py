@@ -8,15 +8,18 @@ class CommonArguments:
         self.dims = dims
         self.verbose = verbose
 
-    def print(self):
-        if not self.tfidf:
-            print("selected feature weighting: TF")
+    def get_rows(self, table):
+        if self.tfidf:
+            table.add_row(["feature weighting", "TF-IDF"])
         else:
-            print("selected feature weighting: TF-IDF")
-        print("selected n for n-grams: " + str(self.ngram))
-        print("filtering english stop words:", end=" ")
+            table.add_row(["feature weighting", "TF"])
+
+        table.add_row(["ngram-range", "(1," + str(self.ngram) + ")"])
         if self.stop:
-            print("ON")
+            table.add_row(["stopwords", "filtered"])
         else:
-            print("OFF")
-        print("selected components for reduction: " + str(self.dims))
+            table.add_row(["stopwords", "not filtered"])
+        table.add_row(["dimensions", self.dims])
+
+        return table
+

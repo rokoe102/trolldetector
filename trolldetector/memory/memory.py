@@ -1,65 +1,73 @@
 import pandas as pd
 from sklearn import naive_bayes, neighbors, svm, tree, neural_network, preprocessing
+from pathlib import Path
+import os
 
 # get a dict of hyperparameters from save file in order to use them
 # for the comparison of all techniques
 def load(technique):
-     dict = []
-     if technique == "KNN":
-         dict = pd.read_csv("memory/best_knn.csv",index_col=0, header=None).T.to_dict("list")
-         dict = convert(dict)
-         clf = getattr(neighbors, dict["clf"][0].replace("(","").replace(")", ""))
-         dict["clf"] = [clf()]
+    root = Path(__file__).parent.parent
 
-     elif technique == "NB":
-         dict = pd.read_csv("memory/best_nb.csv",index_col=0, header=None).T.to_dict("list")
-         dict = convert(dict)
-         clf = getattr(naive_bayes, dict["clf"][0].replace("(", "").replace(")", ""))
-         dict["clf"] = [clf()]
-         if dict["scaling"][0] == "MinMaxScaler()":
-            sca = getattr(preprocessing, dict["scaling"][0].replace("(", "").replace(")", ""))
-            dict["scaling"] = [sca()]
+    dict = []
+    if technique == "KNN":
+     dict = pd.read_csv(os.path.join(root, "memory", "best_knn.csv"),index_col=0, header=None).T.to_dict("list")
+     dict = convert(dict)
+     clf = getattr(neighbors, dict["clf"][0].replace("(","").replace(")", ""))
+     dict["clf"] = [clf()]
+
+    elif technique == "NB":
+     dict = pd.read_csv(os.path.join(root, "memory", "best_nb.csv"),index_col=0, header=None).T.to_dict("list")
+     dict = convert(dict)
+     clf = getattr(naive_bayes, dict["clf"][0].replace("(", "").replace(")", ""))
+     dict["clf"] = [clf()]
+     if dict["scaling"][0] == "MinMaxScaler()":
+        sca = getattr(preprocessing, dict["scaling"][0].replace("(", "").replace(")", ""))
+        dict["scaling"] = [sca()]
 
 
-     elif technique == "SVM":
-         dict = pd.read_csv("memory/best_svm.csv",index_col=0, header=None).T.to_dict("list")
-         dict = convert(dict)
-         clf = getattr(svm, dict["clf"][0].replace("(", "").replace(")", ""))
-         dict["clf"] = [clf()]
+    elif technique == "SVM":
+     dict = pd.read_csv(os.path.join(root, "memory", "best_svm.csv"),index_col=0, header=None).T.to_dict("list")
+     dict = convert(dict)
+     clf = getattr(svm, dict["clf"][0].replace("(", "").replace(")", ""))
+     dict["clf"] = [clf()]
 
-     elif technique == "tree":
-         dict = pd.read_csv("memory/best_tree.csv",index_col=0, header=None).T.to_dict("list")
-         dict = convert(dict)
-         clf = getattr(tree, dict["clf"][0].replace("(", "").replace(")", ""))
-         dict["clf"] = [clf()]
+    elif technique == "tree":
+     dict = pd.read_csv(os.path.join(root, "memory", "best_tree.csv"),index_col=0, header=None).T.to_dict("list")
+     dict = convert(dict)
+     clf = getattr(tree, dict["clf"][0].replace("(", "").replace(")", ""))
+     dict["clf"] = [clf()]
 
-     elif technique == "MLP":
-         dict = pd.read_csv("memory/best_mlp.csv",index_col=0, header=None).T.to_dict("list")
-         dict = convert(dict)
-         clf = getattr(neural_network, dict["clf"][0].replace("(", "").replace(")", ""))
-         dict["clf"] = [clf()]
-     else:
-         print("Error: No valid classification technique")
+    elif technique == "MLP":
+     dict = pd.read_csv(os.path.join(root, "memory", "best_mlp.csv"),index_col=0, header=None).T.to_dict("list")
+     dict = convert(dict)
+     clf = getattr(neural_network, dict["clf"][0].replace("(", "").replace(")", ""))
+     dict["clf"] = [clf()]
+    else:
+     print("Error: No valid classification technique")
 
-     return dict
+    return dict
 
 # save best results of hyperparameter optimization as csv
 def save(results, technique):
+
+    root = Path(__file__).parent.parent
+
+
     df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(),results["params"])), columns=["score", "params"])
     df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
 
     max_row = df[ df["score"] == max(df["score"])]
 
     if technique == "KNN":
-        max_row.T.to_csv("memory/best_knn.csv", header=None, na_rep="None")
+        max_row.T.to_csv(os.path.join(root, "memory", "best_knn.csv"), header=None, na_rep="None")
     elif technique == "NB":
-        max_row.T.to_csv("memory/best_nb.csv", header=None, na_rep="None")
+        max_row.T.to_csv(os.path.join(root, "memory", "best_nb.csv"), header=None, na_rep="None")
     elif technique == "SVM":
-        max_row.T.to_csv("memory/best_svm.csv", header=None, na_rep="None")
+        max_row.T.to_csv(os.path.join(root, "memory", "best_svm.csv"), header=None, na_rep="None")
     elif technique == "tree":
-        max_row.T.to_csv("memory/best_tree.csv", header=None, na_rep="None")
+        max_row.T.to_csv(os.path.join(root, "memory", "best_tree.csv"), header=None, na_rep="None")
     elif technique == "MLP":
-        max_row.T.to_csv("memory/best_mlp.csv", header=None, na_rep="None")
+        max_row.T.to_csv(os.path.join(root, "memory", "best_mlp.csv"), header=None, na_rep="None")
     else:
         print("Error: No valid classification technique")
 

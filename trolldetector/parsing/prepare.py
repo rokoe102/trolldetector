@@ -1,10 +1,16 @@
 import pandas as pd
 import numpy as np
+from pathlib import Path
+import os
 
 # load datasets and return a list of all tweets (text only)
 def prepare_datasets():
-    troll = pd.read_csv("datasets/troll_top10.csv", encoding="utf-8", low_memory=False)
-    nontroll = pd.read_csv("datasets/nontroll_top10.csv", encoding="utf-8", low_memory=False)
+    root = Path(__file__).parent.parent
+    troll_path = os.path.join(root, "datasets", "troll_top10.csv")
+    nontroll_path = os.path.join(root, "datasets", "nontroll_top10.csv")
+
+    troll = pd.read_csv(troll_path, encoding="utf-8", low_memory=False)
+    nontroll = pd.read_csv(nontroll_path, encoding="utf-8", low_memory=False)
 
     tweets = troll['content'].tolist()
     nontroll = nontroll['Text'].tolist()

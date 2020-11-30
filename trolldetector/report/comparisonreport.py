@@ -1,4 +1,5 @@
 import pandas as pd
+from prettytable import PrettyTable, ALL
 
 
 # stores and prints the results of the comparison of all classification techniques
@@ -16,7 +17,6 @@ class ComparisonReport:
                           columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
         self.npv = df
-
 
         df = pd.DataFrame(list(zip(results["mean_test_recall_score"].tolist(),results["params"])), columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
@@ -44,15 +44,15 @@ class ComparisonReport:
 
     def print(self):
 
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print("+----------------------------------------------------+")
         print("|                      REPORT                        |")
-        print("|++++++++++++++++++++++++++++++++++++++++++++++++++++|")
+        print("|----------------------------------------------------|")
         print("|                    mean scores                     |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print("+----------------------------------------------------+")
 
-        # print the mean score in every perfomance metric for every classifier
+        # print the mean score in every performance metric for every classifier
 
-        print("                      \taccuracy\tprecision\tNPV\t\trecall\t\tspecifity\tf1")
+        score_table = PrettyTable(["", "accuracy", "precision", "npv", "recall", "specifity", "f1"])
 
         for clf in self.accuracy["clf"].unique():
             clf_score = {"accuracy": self.accuracy[self.accuracy["clf"] == clf]["score"],
@@ -65,24 +65,42 @@ class ComparisonReport:
 
             name = str(clf)
             bracket = name.find("(")
+            name = name[:bracket]
 
-            print("%-23s\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f\t\t%0.3f" % (
-                   name[:bracket], clf_score["accuracy"], clf_score["precision"], clf_score["npv"], clf_score["recall"], clf_score["specifity"], clf_score["f1"]))
+            score_table.add_row([name,
+                                 round(clf_score["accuracy"].iat[0],3),
+                                 round(clf_score["precision"].iat[0],3),
+                                 round(clf_score["npv"].iat[0],3),
+                                 round(clf_score["recall"].iat[0],3),
+                                 round(clf_score["specifity"].iat[0],3),
+                                 round(clf_score["f1"].iat[0],3)
+                          ])
 
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print(score_table)
+
+
+        print("+----------------------------------------------------+")
         print("|                    mean runtime                    |")
-        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print("+----------------------------------------------------+")
 
         # print the mean runtime for every classifier
 
-        print("                      \ttrain time (s)\ttest time (s)\ttotal")
+        runtime_table = PrettyTable(["", "train time (s)", "test time (s)", "total (s)"])
         for clf in self.train_time["clf"].unique():
+
             runtime = {"train_time": self.train_time[self.train_time["clf"] == clf]["time"],
                        "test_time": self.test_time[self.test_time["clf"] == clf]["time"]
                       }
 
             name = str(clf)
             bracket = name.find("(")
+            name = name[:bracket]
 
-            print("%-23s\t%0.2f\t\t%0.2f\t\t%0.2f" % (name[:bracket], runtime["train_time"], runtime["test_time"],
-                                         runtime["train_time"] + runtime["test_time"]))
+            runtime_table.add_row([name,
+                                   round(runtime["train_time"].iat[0]),
+                                   round(runtime["test_time"].iat[0]),
+                                   round(runtime["train_time"].iat[0]) + round(runtime["test_time"].iat[0])
+                                  ])
+
+        print(runtime_table)
+

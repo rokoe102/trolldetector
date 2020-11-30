@@ -6,21 +6,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 
-from memory import memory
-from parsing import prepare
-from report.hypoptreport import HypOptReport
+from ..memory import memory
+from ..parsing import prepare
+from ..report.hypoptreport import HypOptReport
+from ..report.customreport import CustomReport
+
+from prettytable import PrettyTable, ALL
 
 
 # use the kNN algorithm with custom hyperparameters
 def train_and_test(k, metr,  test, cargs):
 
-    print("+--------------------------------------------------------+")
-    print("classification technique: k-nearest neighbor algorithm")
-    print("selected k value: " + str(k))
-    print("selected metric for distance measurement: " + metr)
-    cargs.print()
-    print("training/testing ratio: " + str(1 - test) + "/" + str(test))
-    print("+--------------------------------------------------------+")
+    # print a summary of all selected arguments
+    print_summary(k,metr,test,cargs)
+
+
     if cargs.verbose:
         print("loading datasets")
 
@@ -64,18 +64,8 @@ def train_and_test(k, metr,  test, cargs):
     predicted = knn.predict(X_test)
 
     # report the results
-    print("+----------------------------------------------------+")
-    print("|                      REPORT                        |")
-    print("+----------------------------------------------------+")
-
-    tn, fp, fn, tp = metrics.confusion_matrix(y_test, predicted).ravel()
-    print("true negatives: " + str(tn))
-    print("false negatives: " + str(fn))
-    print("true positives: " + str(tp))
-    print("false positives: " + str(fp))
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-    print(metrics.classification_report(y_test, predicted))
+    report = CustomReport(y_test, predicted)
+    report.print()
 
 
 # performing a hyperparameter optimization for kNN hyperparameters
@@ -128,3 +118,21 @@ def optimize(test, verbose):
 
     report = HypOptReport("KNN", clf.cv_results_)
     report.print()
+
+def print_summary(k, metr, test, cargs):
+    print("+---------------------------------------------------------------+")
+    print("|                   custom hyperparameters                      |")
+    print("+---------------------------------------------------------------+")
+
+    t = PrettyTable(header=False)
+    t.hrules = ALL
+    t.add_row(["technique", "k-nearest neighbor"])
+    t.add_row(["k value", k])
+    t.add_row(["distance metric", metr])
+
+    t = cargs.get_rows(t)
+
+    t.add_row(["training set", "{} %".format((1 - test) * 100)])
+    t.add_row(["test set", "{} %".format(test * 100)])
+
+    print(t)
