@@ -15,7 +15,10 @@ Zu Beginn soll jedes Verfahren einzeln auf die Eignung als Trollerkennungsinstru
 	\end{center}
 \end{table}
 \subsubsection{k-Nearest-Neighbor-Algorithmus}
-Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahren geteilt werden, die Abstandsmetrik und der k-Wert für die zu untersuchenden Nachbarn gegeben.
+Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahren geteilt werden, die Abstandsmetrik und der k-Wert für die zu untersuchenden Nachbarn gegeben.\\
+Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse der Ausprägungen aller Hyperparameter einerseits im Vergleich untereinander und im Vergleich zur durchschnittlichen und zur besten Performance. Hieraus lassen sich verschiedene Schlussfolgerungen ziehen:
+Insgesamt sind beim KNN-Algorithmus ausgezeichnete Zahlen zu beobachten. Im Maximum liegen  nahezu alle Kennzahlen über 95\%, positiv auffallend sind hier Werte der Segreganz und der Sensitivität von über 97\%. Durchschnittlich werden immer Punktzahlen von über 93\% erreicht. Ein Unterschied im Abschneiden unterschiedlicher Parametereinstellungen ist bei der Merkmalsgewichtung zu erkennen: TF erreicht hier ein wenig bessere Punktzahlen als TF-IDF. Die Filterung von englischen Stoppwörtern bringt im Mittel keine Verbesserung hervor. Extrahiert man nur 1-Gramme, anstatt 1-Gramme und 2-Gramme, erreicht man bis zu 1\% höhere Punktzahlen.\\
+Bei den verfahrensspezifischen Hyperparametern gibt es nur wenige Schwankungen. Beim k-Wert deutet sich an, dass ein einstelliger Wert  besser abschneidet als ein zweistelliger. Die erzielten Verbesserungen belaufen sich jedoch nur auf höchstens 0,5\%. Bei den Metriken ist auffällig, dass unterschiedliche Arten der Abstandsmessungen nahezu keinen Unterschied in der Qualität hervorbringen, die Abweichungen betragen hier höchstens 0,1\%.\\
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
@@ -32,19 +35,16 @@ Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahre
 			$k = 25$  & 0.948  & 0.931  & 0.964  & 0.962 & 0.934  & 0.947  \\ \hline \hline
 			euklid. Metr.  & 0.950 & \textbf{0.935} & 0.965 & 0.963 & 0.937 & 0.949 \\ \hline
 			Manhattan  & 0.950 & 0.934 & \textbf{0.966} &\textbf{0.964} & 0.937 & 0.949 \\ \hline
-			 \hline
+			\hline
 			Maximum  & 0.960 & 0.948 & 0.973 & 0.972 & 0.950 & 0.959 \\ \hline
 			durchschnittl. & 0.950 & 0.934 & 0.965 & 0.964 & 0.937 & 0.949 \\ \hline
 		\end{tabular}
 		\caption{Ergebnisse des kNN-Algorithmus}\label{results-knn}
 	\end{center}
 \end{table}\\
-Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse der Ausprägungen aller Hyperparameter einerseits im Vergleich untereinander und im Vergleich zur durchschnittlichen und zur besten Performance. Hieraus lassen sich verschiedene Schlussfolgerungen ziehen:
-Insgesamt sind beim KNN-Algorithmus ausgezeichnete Zahlen zu beobachten. Im Maximum liegen  nahezu alle Kennzahlen über 95\%, positiv auffallend sind hier Werte der Segreganz und der Sensitivität von über 97\%. Durchschnittlich werden immer Punktzahlen von über 93\% erreicht. Ein Unterschied im Abschneiden unterschiedlicher Parametereinstellungen ist bei der Merkmalsgewichtung zu erkennen: TF erreicht hier ein wenig bessere Punktzahlen als TF-IDF. Die Filterung von englischen Stoppwörtern bringt im Mittel keine Verbesserung hervor. Extrahiert man nur 1-Gramme, anstatt 1-Gramme und 2-Gramme, erreicht man bis zu 1\% höhere Punktzahlen.\\
-Bei den verfahrensspezifischen Hyperparametern gibt es nur wenige Schwankungen. Beim k-Wert deutet sich an, dass ein einstelliger Wert besser abschneidet als ein zweistelliger, die Verbesserungen belaufen sich aber nur auf höchstens 0,5\%. Bei den Metriken ist auffällig, dass unterschiedliche Arten der Abstandsmessungen nahezu keinen Unterschied in der Qualität hervorbringen, die Abweichungen betragen hier höchstens 0,1\%.\\
 Angesichts seiner durchweg hohen Punktzahlen in allen möglichen Gütemaßen ist der k-Nearest-Neighbor-Algorithmus sehr gut für die Erkennung von IRA-ähnlichen Trollen geeignet.
 \subsubsection{Naiver Bayes-Klassifikator}
-Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators ist die angenommene Verteilung der Merkmalvektoren. Getestet wurde mit einer Normalverteilung, einer Multinomialverteilung und einer komplementären Verteilung \citet{rennie03}.
+Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators ist die angenommene Verteilung der Merkmalvektoren. Getestet wurde mit einer Normalverteilung, einer Multinomialverteilung und einer komplementären Verteilung nach \citet{rennie03}.
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|c|c|c|}
@@ -167,7 +167,7 @@ Abschließend werden nun alle Ergebnisse in einen Gesamtzusammenhang eingeordnet
 		\caption{Ergebnisse im Vergleich}\label{results-all}
 	\end{center}
 \end{table}\\
-Im Durchschnitt werden mit allen Verfahren sehr gute Punktzahlen von mindestens 89\% erreicht. Bei Segreganz und Sensitivität sind sogar fast 94\% zu beobachten. Diese Werte sprechen dafür, dass sowohl Troll-Tweets als auch Nichttroll-Tweets mit einer hohen Zuverlässigkeit erkannt werden und dass die Gefahr einer Verwechslung eher gering ist. Somit kann für alle Verfahren eine grundsätzliche Eignung als Trollerkennungsinstrument festgestellt werden. Welches von ihnen in einem konkreten Fall zur Anwendung kommen sollte ist jedoch stets abhängig von den an die Ergebnisse gestellten Anforderungen.\\
+Im Durchschnitt werden mit allen Verfahren sehr gute Punktzahlen von mindestens 89\% erreicht. Bei Segreganz und Sensitivität sind sogar fast 94\% zu beobachten. Diese Werte sprechen dafür, dass sowohl Troll-Tweets als auch Nichttroll-Tweets mit einer hohen Zuverlässigkeit erkannt werden und dass die Gefahr einer Verwechslung eher gering ist. Somit kann für alle Verfahren eine grundsätzliche Eignung als Trollerkennungsinstrument festgestellt werden. Welches der fünf vorliegenden Methoden in einem konkreten Fall zur Anwendung kommen sollte ist jedoch stets abhängig von den an die Ergebnisse gestellten Anforderungen.\\
 Ist Genauigkeit und Zuverlässigkeit das maßgebliche Kriterium, so ist die Wahl des k-Nearest-Neighbor-Algorithmus zu empfehlen. Dieser hat mit 94 - 97\% erkennbar die besten Ergebnisse aller Verfahren. Die Gefahr der Falschklassifikation ist hier mit unter 5\% besonders gering.\\
 Wird jedoch Wert auf eine gute Laufzeit gelegt, so ist der kNN-Algorithmus nicht die erste Wahl. Bei einer gegebenen Anzahl der Trainingsvektoren $N$ und die Anzahl der Dimensionen $d$ kann man die Zeitkomplexität mit $\Theta(dN + kN)$ angeben, sofern die Abstände gespeichert werden und mit $\Theta(kdN)$, falls dies nicht der Fall ist. Die Entscheidungsbaum-Klassifikation hat bei fast gleichwertiger Zuverlässigkeit eine Worst-Case-Laufzeit von $\mathcal{O}(d N \cdot \log(N))$ \citep{sani18}, schneidet jedoch im Mittel deutlich besser ab und hat hier deshalb einen entscheidenden Vorteil.\\
 Es sind in der Anwendung auch Szenarien denkbar, in denen eine Flexibilität bezüglich des Tradeoffs Genauigkeit versus Laufzeit gewünscht wird. Für diesen Fall ist die Klassifikation mit einem Mehrschichtigen Perzeptron zu empfehlen, da die Trainingszeit hier direkt steuerbar ist. Werden schnelle Ergebnisse gewünscht und ist eine geringere Genauigkeit tolerabel so kann die Trainingszeit kurz gewählt werden. Sollen die Ergebnisse jedoch genau sein und eine höhere Laufzeit kann in Kauf genommen werden, dann kann eine längere Trainingszeit einberaumt werden.\\
