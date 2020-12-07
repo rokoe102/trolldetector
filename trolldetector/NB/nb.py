@@ -112,7 +112,7 @@ def train_and_test(test,dist,cargs):
 
 
     # report the results
-    report = CustomReport(y_test,predicted, "NB")
+    report = CustomReport(y_test,predicted)
     report.print()
 
 
