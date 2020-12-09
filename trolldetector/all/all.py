@@ -19,10 +19,10 @@ def compare(verbose):
     print("|       comparison of all classification techniques             |")
     print("+---------------------------------------------------------------+")
 
-    tweets = prepare.prepare_datasets()
+    tweets, n_troll, n_nontroll  = prepare.prepare_datasets()
 
     # splitting into training data and testing data
-    X_train, X_test, y_train, y_test = train_test_split(tweets, prepare.getTarget(), test_size=0.1, random_state=42,
+    X_train, X_test, y_train, y_test = train_test_split(tweets, prepare.getTarget(n_troll, n_nontroll), test_size=0.1, random_state=42,
                                                         shuffle=True)
 
     pipe = Pipeline(steps=[

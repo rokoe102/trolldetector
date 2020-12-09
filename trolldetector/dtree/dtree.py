@@ -25,7 +25,7 @@ def train_and_test(test,metr,cargs):
         print("loading datasets")
 
     # load and label datasets
-    tweets = prepare.prepare_datasets()
+    tweets, n_troll, n_nontroll = prepare.prepare_datasets()
 
     count_vec = CountVectorizer(ngram_range=(1,cargs.ngram))
     tfidf_transformer = TfidfTransformer()
@@ -49,7 +49,7 @@ def train_and_test(test,metr,cargs):
     # splitting into training data and testing data
     if cargs.verbose:
         print("splitting data")
-    X_train, X_test, y_train, y_test = train_test_split(X_reduced, prepare.getTarget(), test_size=test, random_state=42, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(X_reduced, prepare.getTarget(n_troll, n_nontroll), test_size=test, random_state=42, shuffle=True)
 
     treeClf = DecisionTreeClassifier(criterion=metr)
 
@@ -76,12 +76,12 @@ def optimize(test, verbose):
     if verbose:
         print("loading datasets")
 
-    tweets = prepare.prepare_datasets()
+    tweets, n_troll, n_nontroll = prepare.prepare_datasets()
 
     # splitting into training data and testing data
     if verbose:
         print("splitting data")
-    X_train, X_test, y_train, y_test = train_test_split(tweets, prepare.getTarget(), test_size=test, random_state=42, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(tweets, prepare.getTarget(n_troll, n_nontroll), test_size=test, random_state=42, shuffle=True)
 
     pipe = Pipeline(steps=[
         ("vect", CountVectorizer()),

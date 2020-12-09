@@ -10,20 +10,20 @@ def prepare_datasets():
     nontroll_path = os.path.join(root, "datasets", "nontroll_tweets.csv")
 
 
-    troll = pd.read_csv(troll_path, encoding="utf-8", low_memory=False)
-    nontroll = pd.read_csv(nontroll_path, encoding="utf-8", low_memory=False)
+    troll = pd.read_csv(troll_path, engine="python", error_bad_lines=False, na_filter=False)
+    nontroll = pd.read_csv(nontroll_path, engine="python", error_bad_lines=False, na_filter=False)
 
     tweets = troll['content'].tolist()
     nontroll = nontroll['Text'].tolist()
 
     tweets.extend(nontroll)
 
-    return tweets
+    return tweets, len(troll), len(nontroll)
 
 # return the correct labels for the elements in the dataset
-def getTarget():
-    target = np.full(303036, "troll").tolist()
-    t = np.full(324873, "nontroll").tolist()
+def getTarget(troll_len, nontroll_len):
+    target = np.full(troll_len, "troll").tolist()
+    t = np.full(nontroll_len, "nontroll").tolist()
     target.extend(t)
 
     return target
