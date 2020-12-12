@@ -67,7 +67,7 @@ Der einzige verfahrensspezifische Hyperparameter des Naiven Bayes-Klassifikators
 	\end{center}
 \end{table}\\
 Die Ergebnisse in Tabelle \ref{results-nb} lassen folgende Schlüsse zu:
-Dieses Verfahren schneidet je nach Parameter-Einstellung sehr unterschiedlich ab. So liefert die Annahme einer Normalverteilung oder einer komplementären Verteilung Punktzahlen von 75 - 85\%.
+Dieses Verfahren schneidet je nach Parametereinstellung sehr unterschiedlich ab. So liefert die Annahme einer Normalverteilung oder einer komplementären Verteilung Punktzahlen von 75 - 85\%.
 Bei einer Multinomialverteilung sind die Ergebnisse im Durchschnitt deutlich schlechter. Beispielsweise ist die mittlere Treffergenauigkeit 58,5\% und die mittlere Sensitivität bei nur 19,8\%. Es gibt hierbei sehr starke, gleichzeitige Ausreißer nach oben und unten: In Kombination mit TF-IDF wird eine Spezifität von 100\% bei einer Sensitivität von 0\% erreicht, weshalb die Treffergenauigkeit hier etwa 50\% beträgt.\\
 Bei der Merkmalgewichtung schneiden TF und TF-IDF in einer Hälfte der Gütemaße besser ab. Das Unterlassung einer Filterung von englischen Stoppwörtern führt auch bei diesem Verfahren zu leicht besseren Ergebnissen von 2 - 6\%.\\
 Lässt man die Annahme einer Multinomialverteilung außen vor, so werden mit dieser Methode Punktzahlen von durchschnittlich 75\% - 85\% erreicht, was gerade mit Einstellung der richtigen Hyperparameter zu relativ verlässlichen Ergebnissen führt. Unter diesen Voraussetzungen ist das Verfahren zur Trollerkennung durchaus geeignet.
@@ -94,13 +94,14 @@ Die Klassifikation mit einer Support Vector Machine hat wie in Kapitel \ref{svm}
 		\caption{Ergebnisse der SVM-Klassifikation}\label{results-svm}
 	\end{center}
 \end{table}\\
-Bei Ausführung der Optimierung kommen folgende Ergebnisse (Tabelle \ref{results-svm}) zustande:\\
+Bei Ausführung der Optimierung kommen folgende Ergebnisse (Tabelle \ref{results-svm}) zustande:
 Insgesamt liefert die SVM im Mittel Punktzahlen von mindestens 80\% in allen betrachteten Gütemaßen. Beste Werte sind Segreganz und Sensitivität: Durchschnittlich werden hier ca. 93\% und im Maximum 97\% erreicht.\\
 Unterschiedliche Merkmalgewichtungen führen auch hier zu unterschiedlichen Ergebnissen. Sowohl TF als auch TF-IDF schneiden in drei von sechs Gütemaßen besser ab als das jeweils andere. Der stärkste Unterschied betrifft Segreganz und Sensitivität: Hier schneidet TF 6\% besser ab. Bei allen anderen Arten der Merkmalsextraktion gibt es nur wenige Schwankungen von höchstens 2\%.\\
 Beim Bestrafungsparameter C sind bis auf 0,1\% keine Schwankungen in den unterschiedlichen Ausprägungen auszumachen.\\
 Insgesamt ist die SVM-Klassifikation mit den erreichten Punktzahlen ziemlich verlässlich und daher für die Trollerkennung gut geeignet. Von Vorteil ist auch, dass die durchweg hohe Segreganz für ein niedriges $f_n$ spricht, was eine konservative Klassifikation, welche für die Trollerkennung wichtig ist, gewährleistet. Eine positive Eigenschaft ist außerdem die Stabilität des Verfahrens: Selbst mit wenigen bewussten oder zufälligen Einstellungen liefert das Verfahren immer noch gute Ergebnisse, was für eine Art Benutzerfreundlichkeit spricht.
 \subsubsection{Entscheidungsbäume}
-Bei der Entscheidungsbaum-Klassifikation sind neben den von allen geteilten Hyperparametern auch das Aufteilungskriterium gegeben. Die zwei Möglichkeiten sind hier die in Kapitel \ref{tree} beschriebenen Maße Gini Impurity und Entropie. Aus Tabelle \ref{results-tree} lassen sich folgende Schlüsse ziehen:\\
+Bei der Entscheidungsbaum-Klassifikation sind neben den von allen geteilten Hyperparametern auch das Aufteilungskriterium gegeben. Die zwei Möglichkeiten sind hier die in Kapitel \ref{tree} beschriebenen Maße Gini Impurity und Entropie.\\
+Aus Tabelle \ref{results-tree} lassen sich folgende Schlüsse ziehen:
 Die Klassifikation erreicht im Mittel in allen Gütekriterien sehr hohe Werte von 94\%. Die maximalen Werte liegen mit ca. 95\% nur 1\% darüber. Es lässt sich aus diesem Grund leicht erkennen, dass hier nur sehr geringe Schwankungen vorhanden sind. Dies ist auch im Vergleich unter den Hyperparametern zu erkennen: Zwischen TF und TF-IDF, der Filterung englischer Stoppwörter und keiner Filterung und der Auswahl der jeweiligen n-Gramme liegen jeweils nur 1\% Unterschied. Die Aufteilungskriterien Gini Impurity und Entropie unterscheiden sich nur um 0,2\%.\\
 Diese ausgezeichneten Punktzahlen legen nahe, dass eine zuverlässige Trollerkennung mit diesem Verfahren sehr gut zu leisten ist. Sowohl die geringen Schwankungen unter den Hyperparametern, als auch die geringen Unterschiede in den Gütekriterien sprechen für eine hohe Stabilität des Verfahrens. Dies bedeutet auch hier, dass selbst zufällige Einstellungen niemals zu schlechten Ergebnissen führen können.\\
 \begin{table}[htb]
@@ -108,14 +109,14 @@ Diese ausgezeichneten Punktzahlen legen nahe, dass eine zuverlässige Trollerken
 		\begin{tabular}{|c|c|c|c|c|c|c|}
 			\hline 
 			Hyperparameter & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
-			TF       & 0.945 & 0.938 & 0.951 & 0.948 & 0.941 & 0.943 \\ \hline
+			TF       & \textbf{0.945} & \textbf{0.938} & \textbf{0.951} & \textbf{0.948} & \textbf{0.941} & \textbf{0.943} \\ \hline
 			TF-IDF   & 0.936 & 0.930 & 0.941 & 0.937 & 0.934 & 0.934 \\ \hline \hline
 			engl. Stoppwörter & 0.938 & 0.932 & 0.943 & 0.939 & 0.936 & 0.936 \\ \hline
-			keine Filterung    & 0.942 & 0.935 & 0.949 & 0.946 & 0.939 & 0.941 \\ \hline \hline
-			1-Gramme   & 0.944 & 0.937 & 0.951 & 0.948 & 0.948 & 0.943 \\ \hline
+			keine Filterung    & \textbf{0.942} & \textbf{0.935} & \textbf{0.949} & \textbf{0.946} & \textbf{0.939} & \textbf{0.941} \\ \hline \hline
+			1-Gramme   & \textbf{0.944} & \textbf{0.937} & \textbf{0.951} & \textbf{0.948} & \textbf{0.948} & \textbf{0.943} \\ \hline
 			1+2-Gramme  & 0.936 & 0.931 & 0.941 & 0.937 & 0.937 & 0.934 \\ \hline \hline
 			Gini & 0.939 & 0.933 & 0.945 & 0.942 & 0.937 & 0.937 \\ \hline
-			Entropie & 0.941 & 0.935 & 0.947 & 0.944 & 0.939 & 0.939 \\ \hline
+			Entropie & \textbf{0.941} & \textbf{0.935} & \textbf{0.947} & \textbf{0.944} & \textbf{0.939} & \textbf{0.939} \\ \hline
 			\hline
 			Maximum        & 0.950 & 0.944 & 0.957 & 0.954 & 0.947 & 0.949 \\ \hline
 			durchschnittl. & 0.940 & 0.934 & 0.946 & 0.943 & 0.938 & 0.938 \\ \hline
@@ -168,7 +169,7 @@ Abschließend werden nun alle Ergebnisse in einen Gesamtzusammenhang eingeordnet
 	\end{center}
 \end{table}\\
 Im Durchschnitt werden mit allen Verfahren sehr gute Punktzahlen von mindestens 89\% erreicht. Bei Segreganz und Sensitivität sind sogar fast 94\% zu beobachten. Diese Werte sprechen dafür, dass sowohl Troll-Tweets als auch Nichttroll-Tweets mit einer hohen Zuverlässigkeit erkannt werden und dass die Gefahr einer Verwechslung eher gering ist. Somit kann für alle Verfahren eine grundsätzliche Eignung als Trollerkennungsinstrument festgestellt werden. Welches der fünf vorliegenden Methoden in einem konkreten Fall zur Anwendung kommen sollte ist jedoch stets abhängig von den an die Ergebnisse gestellten Anforderungen.\\
-Ist Genauigkeit und Zuverlässigkeit das maßgebliche Kriterium, so ist die Wahl des k-Nearest-Neighbor-Algorithmus zu empfehlen. Dieser hat mit 94 - 97\% erkennbar die besten Ergebnisse aller Verfahren. Die Gefahr der Falschklassifikation ist hier mit unter 5\% besonders gering.\\
+Sind Genauigkeit und Zuverlässigkeit die maßgeblichen Kriterien, so ist die Wahl des k-Nearest-Neighbor-Algorithmus zu empfehlen. Dieser hat mit 94 - 97\% erkennbar die besten Ergebnisse aller Verfahren. Die Gefahr der Falschklassifikation ist hier mit unter 5\% besonders gering.\\
 Wird jedoch Wert auf eine gute Laufzeit gelegt, so ist der kNN-Algorithmus nicht die erste Wahl. Bei einer gegebenen Anzahl der Trainingsvektoren $N$ und die Anzahl der Dimensionen $d$ kann man die Zeitkomplexität mit $\Theta(dN + kN)$ angeben, sofern die Abstände gespeichert werden und mit $\Theta(kdN)$, falls dies nicht der Fall ist. Die Entscheidungsbaum-Klassifikation hat bei fast gleichwertiger Zuverlässigkeit eine Worst-Case-Laufzeit von $\mathcal{O}(d N \cdot \log(N))$ \citep{sani18}, schneidet jedoch im Mittel deutlich besser ab und hat hier deshalb einen entscheidenden Vorteil.\\
 Es sind in der Anwendung auch Szenarien denkbar, in denen eine Flexibilität bezüglich des Tradeoffs Genauigkeit versus Laufzeit gewünscht wird. Für diesen Fall ist die Klassifikation mit einem Mehrschichtigen Perzeptron zu empfehlen, da die Trainingszeit hier direkt steuerbar ist. Werden schnelle Ergebnisse gewünscht und ist eine geringere Genauigkeit tolerabel so kann die Trainingszeit kurz gewählt werden. Sollen die Ergebnisse jedoch genau sein und eine höhere Laufzeit kann in Kauf genommen werden, dann kann eine längere Trainingszeit einberaumt werden.\\
 Die Klassifikation mittels Support Vector Machine ist merkbar ungenauer als die drei hier zuerst genannten Verfahren und deshalb für die Trollerkennung eher zweite Wahl. Die Naive Bayes-Klassifikation ist als das mit Abstand ungenauste Verfahren am wenigsten für die Anwendung geeignet.
