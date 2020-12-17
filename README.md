@@ -24,10 +24,10 @@ trolldetector [common options] {KNN, NB, SVM, tree, MLP} [specific options]
 ```
 There are several options all techniques have in common:
 - ``` --tfidf ``` changes the  feature weighting from TF to TF-IDF
-- ``` --stopwords ``` activates english stopword filtering
-- ``` --ngram <n> ``` changes the range of extracted ngrams to (1,n)
-- ``` --dim <components>``` determines the level of dimensionality reduction
-- ``` --test <(0,1)>``` changes the amount of the dataset used for testing
+- ``` --stopwords ``` activates english stop word filtering
+- ``` --ngram <n> ``` changes the range of extracted ngrams to (1,n) (default: 1)
+- ``` --dim <components>``` determines the level of dimensionality reduction (default: 10)
+- ``` --test <(0,1)>``` changes the amount of the dataset used for testing (default: 0.1)
 - ``` -h``` displays help message
 
 KNN specific options:
@@ -54,7 +54,7 @@ trolldetector KNN
 ```
 Examples of execution with custom hyperparameters:
 ```
-trolldetector --tfidf -ngram 2 --dim 15 --test 0.2 NB -d multinomial
+trolldetector --tfidf --dim 15  NB -d multinomial
 ```
 ```
 trolldetector --dim 2 --test 0.01 MLP -a tanh --iter 7 --tol 0.005

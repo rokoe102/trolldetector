@@ -148,6 +148,7 @@ def optimize():
     report.print()
 
 
+# print a summary of all selected arguments before execution
 def print_summary(dist, cargs):
     print("+----------------------------------------------------+")
     print("|              custom hyperparameters                |")

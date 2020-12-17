@@ -70,6 +70,7 @@ def tol_warning(value):
     return arg
 
 
+# ask user to confirm selected arguments
 def check_choice():
     proceed = False
     indifferent = 0

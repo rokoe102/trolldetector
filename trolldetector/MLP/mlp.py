@@ -113,6 +113,7 @@ def optimize():
     report.print()
 
 
+# print a summary of all selected arguments before execution
 def print_summary(activation, iterations, tol, cargs):
     print("+----------------------------------------------------+")
     print("|              custom hyperparameters                |")
@@ -120,7 +121,7 @@ def print_summary(activation, iterations, tol, cargs):
 
     t = PrettyTable(header=False)
     t.hrules = ALL
-    t.add_row(["technique", "multi-layer perceptron"])
+    t.add_row(["technique", "Multilayer Perceptron"])
     t.add_row(["activation function", activation])
     t.add_row(["stopping condition", "{} iterations < {}".format(iterations, tol)])
 

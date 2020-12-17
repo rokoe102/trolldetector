@@ -5,7 +5,6 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
-from sklearn.exceptions import ConvergenceWarning
 
 from ..memory import memory
 from ..parsing import prepare
@@ -66,7 +65,6 @@ def optimize():
     print("|  hyperparameter optimization for: support vector machine |")
     print("+----------------------------------------------------------+")
 
-
     tweets, n_troll, n_nontroll = prepare.prepare_datasets()
 
     # splitting into training data and testing data
@@ -110,6 +108,7 @@ def optimize():
     report.print()
 
 
+# print a summary of all selected arguments before execution
 def print_summary(cost, cargs):
     print("+----------------------------------------------------+")
     print("|              custom hyperparameters                |")
@@ -117,7 +116,7 @@ def print_summary(cost, cargs):
 
     t = PrettyTable(header=False)
     t.hrules = ALL
-    t.add_row(["technique", "support vector machine"])
+    t.add_row(["technique", "Support Vector Machine"])
     t.add_row(["C value", cost])
 
     t = cargs.get_rows(t)

@@ -58,5 +58,7 @@ def compare():
 
     results = clf.cv_results_
 
+    # print report with mean scores and runtimes
+
     report = ComparisonReport(results)
     report.print()

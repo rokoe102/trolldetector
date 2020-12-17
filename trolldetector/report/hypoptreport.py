@@ -4,12 +4,11 @@ from prettytable import PrettyTable, ALL
 
 
 # stores and prints the results of an executed hyperparameter optimization
-# noinspection PyStringFormat
 class HypOptReport:
     def __init__(self, technique, results):
         self.technique = technique
 
-        # store metric score, std deviation and the params for every performance metric
+        # store metric score and the params for every performance metric
 
         df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(), results["params"])),
                           columns=["score", "params"])
@@ -123,19 +122,21 @@ class HypOptReport:
                        "%0.3f" % avg_score["f1"]
                        ])
 
-        tfidf_score = {"accuracy": np.mean(self.accuracy[self.accuracy["tfidf__use_idf"] == True]["score"]),
-                       "precision": np.mean(self.precision[self.precision["tfidf__use_idf"] == True]["score"]),
-                       "npv": np.mean(self.npv[self.npv["tfidf__use_idf"] == True]["score"]),
-                       "recall": np.mean(self.recall[self.recall["tfidf__use_idf"] == True]["score"]),
-                       "specifity": np.mean(self.specifity[self.specifity["tfidf__use_idf"] == True]["score"]),
-                       "f1": np.mean(self.f_one[self.f_one["tfidf__use_idf"] == True]["score"])
+        # determine mean performance for every specific hyperparameter
+
+        tfidf_score = {"accuracy": np.mean(self.accuracy[self.accuracy["tfidf__use_idf"] is True]["score"]),
+                       "precision": np.mean(self.precision[self.precision["tfidf__use_idf"] is True]["score"]),
+                       "npv": np.mean(self.npv[self.npv["tfidf__use_idf"] is True]["score"]),
+                       "recall": np.mean(self.recall[self.recall["tfidf__use_idf"] is True]["score"]),
+                       "specifity": np.mean(self.specifity[self.specifity["tfidf__use_idf"] is True]["score"]),
+                       "f1": np.mean(self.f_one[self.f_one["tfidf__use_idf"] is True]["score"])
                        }
-        tf_score = {"accuracy": np.mean(self.accuracy[self.accuracy["tfidf__use_idf"] == False]["score"]),
-                    "precision": np.mean(self.precision[self.precision["tfidf__use_idf"] == False]["score"]),
-                    "npv": np.mean(self.npv[self.npv["tfidf__use_idf"] == False]["score"]),
-                    "recall": np.mean(self.recall[self.recall["tfidf__use_idf"] == False]["score"]),
-                    "specifity": np.mean(self.specifity[self.specifity["tfidf__use_idf"] == False]["score"]),
-                    "f1": np.mean(self.f_one[self.f_one["tfidf__use_idf"] == False]["score"])
+        tf_score = {"accuracy": np.mean(self.accuracy[self.accuracy["tfidf__use_idf"] is False]["score"]),
+                    "precision": np.mean(self.precision[self.precision["tfidf__use_idf"] is False]["score"]),
+                    "npv": np.mean(self.npv[self.npv["tfidf__use_idf"] is False]["score"]),
+                    "recall": np.mean(self.recall[self.recall["tfidf__use_idf"] is False]["score"]),
+                    "specifity": np.mean(self.specifity[self.specifity["tfidf__use_idf"] is False]["score"]),
+                    "f1": np.mean(self.f_one[self.f_one["tfidf__use_idf"] is False]["score"])
                     }
 
         table.add_row(["TF",
@@ -264,7 +265,6 @@ class HypOptReport:
         return table
 
     # print tables with mean scores of every Naive Bayes specific hyperparameter
-    # noinspection PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat
     def print_nb(self, table):
 
         for dist in self.accuracy["clf"].unique():
@@ -310,7 +310,6 @@ class HypOptReport:
         return table
 
     # print tables with mean scores of every Decision Tree specific hyperparameter
-    # noinspection PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat
     def print_dt(self, table):
 
         for criterion in self.accuracy["clf__criterion"].unique():
@@ -333,7 +332,6 @@ class HypOptReport:
         return table
 
     # print tables with mean scores of every MLP specific hyperparameter
-    # noinspection PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat,PyStringFormat
     def print_mlp(self, table):
 
         for activation in self.accuracy["clf__activation"].unique():

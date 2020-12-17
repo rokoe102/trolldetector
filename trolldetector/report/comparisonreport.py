@@ -5,6 +5,9 @@ from prettytable import PrettyTable, ALL
 # stores and prints the results of the comparison of all classification techniques
 class ComparisonReport:
     def __init__(self, results):
+
+        # save score for every performance metric
+
         df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(), results["params"])),
                           columns=["score", "params"])
         df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
@@ -67,6 +70,7 @@ class ComparisonReport:
                          "f1": self.f_one[self.f_one["clf"] == clf]["score"]
                          }
 
+            # print without '()'
             name = str(clf)
             bracket = name.find("(")
             name = name[:bracket]

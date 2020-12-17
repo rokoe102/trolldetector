@@ -44,6 +44,7 @@ def load(technique):
         params = convert(params)
         clf = getattr(neural_network, params["clf"][0].replace("(", "").replace(")", ""))
         params["clf"] = [clf()]
+
     else:
         print("Error: No valid classification technique")
 

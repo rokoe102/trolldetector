@@ -4,7 +4,7 @@ from trolldetector.MLP import mlp
 from trolldetector.NB import nb
 from trolldetector.SVM import svm
 from trolldetector.all import all
-from trolldetector.dtree import dtree
+from trolldetector.tree import tree
 from trolldetector.parsing.commonarguments import CommonArguments
 from trolldetector.parsing import check
 
@@ -19,7 +19,6 @@ def main():
                          help="hyperparameter optimization (ignoring other options)")
 
     subparsers = pparser.add_subparsers(title="classification techniques", dest="command")
-
 
     # arguments all commands have in common
     pparser.add_argument("--ngram", dest="gram", metavar="<n>", type=check.ngram_warning, default=1,
@@ -37,7 +36,6 @@ def main():
     pparser.add_argument("--test", dest="test_set", metavar="<(0,1)>", type=check.test, default=0.1,
                          help="changes the proportion of training and testing data")
 
-
     # parser for KNN command
     knn_parser = subparsers.add_parser("KNN", add_help=False, help="k-Nearest Neighbor Classification")
 
@@ -48,7 +46,6 @@ def main():
 
     knn_parser.add_argument("-h", dest="help_knn", action="store_true", help="displays this help message")
 
-
     # parser for NB command
     nb_parser = subparsers.add_parser("NB", add_help=False, help="Naive Bayes Classification")
 
@@ -58,7 +55,6 @@ def main():
 
     nb_parser.add_argument("-h", dest="help_nb", action="store_true", help="displays this help message")
 
-
     # parser for SVM command
     svm_parser = subparsers.add_parser("SVM", add_help=False, help="Support-vector Machine Classification")
 
@@ -67,7 +63,6 @@ def main():
 
     svm_parser.add_argument("-h", dest="help_svm", action="store_true", help="displays this help message")
 
-
     # parser for tree command
     tree_parser = subparsers.add_parser("tree", add_help=False, help="Decision Tree Classification")
 
@@ -75,7 +70,6 @@ def main():
                              help="determines the metric used for finding the best split")
 
     tree_parser.add_argument("-h", dest="help_tree", action="store_true", help="displays this help message")
-
 
     # parser for MLP command
     mlp_parser = subparsers.add_parser("MLP", add_help=False, help="Multilayer Perceptron Classification")
@@ -91,12 +85,10 @@ def main():
 
     mlp_parser.add_argument("-h", dest="help_mlp", action="store_true", help="displays this help message")
 
-
     # parser for all command
     all_parser = subparsers.add_parser("all", add_help=False, help="compare all classificators")
 
     all_parser.add_argument("-h", dest="help_all", action="store_true", help="displays this help message")
-
 
     # get arguments
     args = pparser.parse_args()
@@ -144,10 +136,10 @@ def main():
             tree_parser.print_help()
 
         elif args.optimize:
-            dtree.optimize()
+            tree.optimize()
 
         else:
-            dtree.train_and_test(args.splitting, cargs)
+            tree.train_and_test(args.splitting, cargs)
 
     elif method == "MLP":
         if args.help_mlp:
@@ -165,3 +157,6 @@ def main():
 
         else:
             all.compare()
+
+    else:
+        pparser.print_help()

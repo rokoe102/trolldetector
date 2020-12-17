@@ -45,15 +45,15 @@ def train_and_test(metr, cargs):
     X_train, X_test, y_train, y_test = train_test_split(X_reduced, prepare.get_target(n_troll, n_nontroll),
                                                         test_size=cargs.test_set, random_state=42, shuffle=True)
 
-    treeClf = DecisionTreeClassifier(criterion=metr)
+    tree_clf = DecisionTreeClassifier(criterion=metr)
 
     # training
     print("> training the model")
-    treeClf.fit(X_train, y_train)
+    tree_clf.fit(X_train, y_train)
 
     # testing
     print("> making predictions")
-    predicted = treeClf.predict(X_test)
+    predicted = tree_clf.predict(X_test)
 
     # report the results
     report = CustomReport(y_test, predicted)
@@ -107,6 +107,7 @@ def optimize():
     report.print()
 
 
+# print a summary of all selected arguments before execution
 def print_summary(metr, cargs):
     print("+----------------------------------------------------+")
     print("|              custom hyperparameters                |")

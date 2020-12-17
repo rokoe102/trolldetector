@@ -16,7 +16,7 @@ trolldetector/MLP/__pycache__
 trolldetector/NB/__pycache__
 trolldetector/SVM/__pycache__
 trolldetector/all/__pycache__
-trolldetector/dtree/__pycache__
+trolldetector/tree/__pycache__
 trolldetector/parsing/__pycache__
 trolldetector/report/__pycache__
 trolldetector/memory/__pycache__

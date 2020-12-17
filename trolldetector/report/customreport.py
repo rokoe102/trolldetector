@@ -22,21 +22,24 @@ class CustomReport:
         print("|                      REPORT                        |")
         print("+----------------------------------------------------+")
 
+        # extract values from confusion matrix
+
         tn, fp, fn, tp = self.conf.ravel()
 
-        print("+----------------------------------------------------+")
+        print("\n+----------------------------------------------------+")
         print("|                 confusion matrix                   |")
         print("+----------------------------------------------------+")
 
-        matrix = PrettyTable(["", "labelled nontroll", "labelled troll"])
+        matrix = PrettyTable(["", "labelled nontroll", "labelled troll", "total"])
         matrix.vrules = ALL
         matrix.hrules = ALL
-        matrix.add_row(["true nontroll", tn, fp])
-        matrix.add_row(["true troll", fn, tp])
+        matrix.add_row(["true nontroll", tn, fp, tn+fp])
+        matrix.add_row(["true troll", fn, tp, fn+tp])
+        matrix.add_row(["total", tn+fn, fp+tp, tn+fp+fn+tp])
 
         print(matrix)
 
-        print("+----------------------------------------------------+")
+        print("\n+----------------------------------------------------+")
         print("|                performance metrics                 |")
         print("+----------------------------------------------------+")
         score_table = PrettyTable(["accuracy", "precision", "NPV", "recall", "specifity", "f1"])
