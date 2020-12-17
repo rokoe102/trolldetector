@@ -15,9 +15,9 @@ Zu Beginn soll jedes Verfahren einzeln auf die Eignung als Trollerkennungsinstru
 	\end{center}
 \end{table}
 \subsubsection{k-Nearest-Neighbor-Algorithmus}
-Beim KNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahren geteilt werden, die Abstandsmetrik und der k-Wert für die zu untersuchenden Nachbarn gegeben.\\
+Beim kNN-Algorithmus sind neben den Hyperparametern, welche mit anderen Verfahren geteilt werden, die Abstandsmetrik und der k-Wert für die zu untersuchenden Nachbarn gegeben.\\
 Tabelle \ref{results-knn} zeigt die mittleren Ergebnisse der Ausprägungen aller Hyperparameter einerseits im Vergleich untereinander und im Vergleich zur durchschnittlichen und zur besten Performance. Hieraus lassen sich verschiedene Schlussfolgerungen ziehen:
-Insgesamt sind beim KNN-Algorithmus ausgezeichnete Zahlen zu beobachten. Im Maximum liegen  nahezu alle Kennzahlen über 95\%, positiv auffallend sind hier Werte der Segreganz und der Sensitivität von über 97\%. Durchschnittlich werden immer Punktzahlen von über 93\% erreicht. Ein Unterschied im Abschneiden unterschiedlicher Parametereinstellungen ist bei der Merkmalsgewichtung zu erkennen: TF erreicht hier ein wenig bessere Punktzahlen als TF-IDF. Die Filterung von englischen Stoppwörtern bringt im Mittel keine Verbesserung hervor. Extrahiert man nur 1-Gramme, anstatt 1-Gramme und 2-Gramme, erreicht man bis zu 1\% höhere Punktzahlen.\\
+Insgesamt sind beim kNN-Algorithmus ausgezeichnete Zahlen zu beobachten. Im Maximum liegen  nahezu alle Kennzahlen über 95\%, positiv auffallend sind hier Werte der Segreganz und der Sensitivität von über 97\%. Durchschnittlich werden immer Punktzahlen von über 93\% erreicht. Ein Unterschied im Abschneiden unterschiedlicher Parametereinstellungen ist bei der Merkmalsgewichtung zu erkennen: TF erreicht hier ein wenig bessere Punktzahlen als TF-IDF. Die Filterung von englischen Stoppwörtern bringt im Mittel keine Verbesserung hervor. Extrahiert man nur 1-Gramme, anstatt 1-Gramme und 2-Gramme, erreicht man bis zu 1\% höhere Punktzahlen.\\
 Bei den verfahrensspezifischen Hyperparametern gibt es nur wenige Schwankungen. Beim k-Wert deutet sich an, dass ein einstelliger Wert  besser abschneidet als ein zweistelliger. Die erzielten Verbesserungen belaufen sich jedoch nur auf höchstens 0,5\%. Bei den Metriken ist auffällig, dass unterschiedliche Arten der Abstandsmessungen nahezu keinen Unterschied in der Qualität hervorbringen, die Abweichungen betragen hier höchstens 0,1\%.\\
 \begin{table}[htb]
 	\begin{center}
@@ -158,7 +158,7 @@ Abschließend werden nun alle Ergebnisse in einen Gesamtzusammenhang eingeordnet
 		\begin{tabular}{|c|c|c|c|c|c|c|}
 			\hline 
 			Verfahren & Genauigkeit & Relevanz & Segreganz & Sensitivität & Spezifität & $F_1$ \\ \hline \hline
-			KNN      & \textbf{0.958} & \textbf{0.943} & \textbf{0.973} & \textbf{0.972} & \textbf{0.945} & \textbf{0.957} \\ \hline
+			kNN      & \textbf{0.958} & \textbf{0.943} & \textbf{0.973} & \textbf{0.972} & \textbf{0.945} & \textbf{0.957} \\ \hline
 			NB   & 0.830 & 0.779 & 0.898 & 0.907 & 0.759 & 0.838 \\ \hline 
 			SVM & 0.892 & 0.866 & 0.919 & 0.918 & 0.868 & 0.892 \\ \hline 
 			Baum   & 0.943 & 0.937 & 0.950 & 0.947 & 0.940 & 0.942 \\ \hline
