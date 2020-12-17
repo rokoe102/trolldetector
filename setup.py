@@ -5,8 +5,9 @@ with open('requirements.txt') as f:
 
 setup(
     name='Trolldetector',
-    version='0.1',
-    description='Just an example',
+    version='1.0',
+    description='This command line tool is used to apply five different classification techniques on a dataset '
+                'consisting of troll and nontroll tweets.',
     author='Robin Kösters',
     author_email='robin.koesters@uni-duesseldorf.de',
     packages=find_packages(),

@@ -3,60 +3,63 @@ from sklearn import naive_bayes, neighbors, svm, tree, neural_network, preproces
 from pathlib import Path
 import os
 
+
 # get a dict of hyperparameters from save file in order to use them
 # for the comparison of all techniques
 def load(technique):
     root = Path(__file__).parent.parent
 
-    dict = []
+    # instantiate classifier class and suitable parameters for technique
+
+    params = []
     if technique == "KNN":
-     dict = pd.read_csv(os.path.join(root, "memory", "best_knn.csv"),index_col=0, header=None).T.to_dict("list")
-     dict = convert(dict)
-     clf = getattr(neighbors, dict["clf"][0].replace("(","").replace(")", ""))
-     dict["clf"] = [clf()]
+        params = pd.read_csv(os.path.join(root, "memory", "best_knn.csv"), index_col=0, header=None).T.to_dict("list")
+        params = convert(params)
+        clf = getattr(neighbors, params["clf"][0].replace("(", "").replace(")", ""))
+        params["clf"] = [clf()]
 
     elif technique == "NB":
-     dict = pd.read_csv(os.path.join(root, "memory", "best_nb.csv"),index_col=0, header=None).T.to_dict("list")
-     dict = convert(dict)
-     clf = getattr(naive_bayes, dict["clf"][0].replace("(", "").replace(")", ""))
-     dict["clf"] = [clf()]
-     if dict["scaling"][0] == "MinMaxScaler()":
-        sca = getattr(preprocessing, dict["scaling"][0].replace("(", "").replace(")", ""))
-        dict["scaling"] = [sca()]
-
+        params = pd.read_csv(os.path.join(root, "memory", "best_nb.csv"), index_col=0, header=None).T.to_dict("list")
+        params = convert(params)
+        clf = getattr(naive_bayes, params["clf"][0].replace("(", "").replace(")", ""))
+        params["clf"] = [clf()]
+        if params["scaling"][0] == "MinMaxScaler()":
+            sca = getattr(preprocessing, params["scaling"][0].replace("(", "").replace(")", ""))
+            params["scaling"] = [sca()]
 
     elif technique == "SVM":
-     dict = pd.read_csv(os.path.join(root, "memory", "best_svm.csv"),index_col=0, header=None).T.to_dict("list")
-     dict = convert(dict)
-     clf = getattr(svm, dict["clf"][0].replace("(", "").replace(")", ""))
-     dict["clf"] = [clf()]
+        params = pd.read_csv(os.path.join(root, "memory", "best_svm.csv"), index_col=0, header=None).T.to_dict("list")
+        params = convert(params)
+        clf = getattr(svm, params["clf"][0].replace("(", "").replace(")", ""))
+        params["clf"] = [clf()]
 
     elif technique == "tree":
-     dict = pd.read_csv(os.path.join(root, "memory", "best_tree.csv"),index_col=0, header=None).T.to_dict("list")
-     dict = convert(dict)
-     clf = getattr(tree, dict["clf"][0].replace("(", "").replace(")", ""))
-     dict["clf"] = [clf()]
+        params = pd.read_csv(os.path.join(root, "memory", "best_tree.csv"), index_col=0, header=None).T.to_dict("list")
+        params = convert(params)
+        clf = getattr(tree, params["clf"][0].replace("(", "").replace(")", ""))
+        params["clf"] = [clf()]
 
     elif technique == "MLP":
-     dict = pd.read_csv(os.path.join(root, "memory", "best_mlp.csv"),index_col=0, header=None).T.to_dict("list")
-     dict = convert(dict)
-     clf = getattr(neural_network, dict["clf"][0].replace("(", "").replace(")", ""))
-     dict["clf"] = [clf()]
+        params = pd.read_csv(os.path.join(root, "memory", "best_mlp.csv"), index_col=0, header=None).T.to_dict("list")
+        params = convert(params)
+        clf = getattr(neural_network, params["clf"][0].replace("(", "").replace(")", ""))
+        params["clf"] = [clf()]
     else:
-     print("Error: No valid classification technique")
+        print("Error: No valid classification technique")
 
-    return dict
+    return params
+
 
 # save best results of hyperparameter optimization as csv
 def save(results, technique):
-
     root = Path(__file__).parent.parent
 
-
-    df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(),results["params"])), columns=["score", "params"])
+    df = pd.DataFrame(list(zip(results["mean_test_accuracy_score"].tolist(), results["params"])),
+                      columns=["score", "params"])
     df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
 
-    max_row = df[ df["score"] == max(df["score"])]
+    # find maximum accuracy
+    max_row = df[df["score"] == max(df["score"])]
 
     if technique == "KNN":
         max_row.T.to_csv(os.path.join(root, "memory", "best_knn.csv"), header=None, na_rep="None")
@@ -71,21 +74,22 @@ def save(results, technique):
     else:
         print("Error: No valid classification technique")
 
+
 # convert strings in dict into the suitable datatypes
-def convert(dict):
-    for sub in dict:
-        if dict[sub][0] in ["True", "False"]:
-            dict[sub][0] = bool(dict[sub][0])
-        elif dict[sub][0].isdecimal():
-            dict[sub][0] = int(dict[sub][0])
-        elif dict[sub][0].replace('.', '', 1).isdigit():
-            dict[sub][0] = float(dict[sub][0])
-        elif dict[sub][0].find("(") != -1 and dict[sub][0].find(")") != -1 and dict[sub][0].find(",") != -1:
-            dict[sub][0] = eval(dict[sub][0])
-        elif dict[sub][0] == "None":
-            dict[sub][0] = None
+def convert(params):
+    for sub in params:
+        if params[sub][0] in ["True", "False"]:
+            params[sub][0] = bool(params[sub][0])
+        elif params[sub][0].isdecimal():
+            params[sub][0] = int(params[sub][0])
+        elif params[sub][0].replace('.', '', 1).isdigit():
+            params[sub][0] = float(params[sub][0])
+        elif params[sub][0].find("(") != -1 and params[sub][0].find(")") != -1 and params[sub][0].find(",") != -1:
+            params[sub][0] = eval(params[sub][0])
+        elif params[sub][0] == "None":
+            params[sub][0] = None
 
     # delete score key as it's not suitable for parameter space
-    dict = {x: dict[x] for x in dict if x not in ["score"]}
+    params = {x: params[x] for x in params if x not in ["score"]}
 
-    return dict
+    return params

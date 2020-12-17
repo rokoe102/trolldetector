@@ -28,7 +28,6 @@ There are several options all techniques have in common:
 - ``` --ngram <n> ``` changes the range of extracted ngrams to (1,n)
 - ``` --dim <components>``` determines the level of dimensionality reduction
 - ``` --test <(0,1)>``` changes the amount of the dataset used for testing
-- ``` -v``` producing more detailed output
 - ``` -h``` displays help message
 
 KNN specific options:
